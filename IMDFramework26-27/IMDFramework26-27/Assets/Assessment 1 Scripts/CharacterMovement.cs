@@ -1,5 +1,8 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class CharacterMovement : MonoBehaviour
 	private float m_InMove;
     private PlayerControls m_ActionMap;
     private bool m_IsGrounded;
+    private bool m_isJumpInput;
+    [SerializeField]  private float m_jumpBufferLength = 1;
 
     private void Awake()
     {
@@ -51,12 +56,43 @@ public class CharacterMovement : MonoBehaviour
         m_InMove = 0f;
     }
 
+
+    float m_JumpBufferWait;
+
+
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
+        m_isJumpInput = true;
         if (m_IsGrounded)
         {
             m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+            m_isJumpInput = false;
         }
+        else// we are in the air
+        {
+            //save the current time
+            //timeInAir = Time.time;
+            m_JumpBufferWait = Time.time;
+            Debug.Log(m_JumpBufferWait);
+        }
+
+
+
+        //else if (m_isJumpInput == 1)
+        //{
+        //    m_isJumpInput = ;
+
+        //    while (m_JumpBufferWait > Time.deltaTime)
+        //    {
+        //        if (m_IsGrounded)
+        //        {
+        //            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+        //            break;
+        //        }
+
+        //    }
+
+        //}
     }
     #endregion
 
@@ -67,4 +103,27 @@ public class CharacterMovement : MonoBehaviour
 
         m_IsGrounded = Physics2D.Raycast(m_RaycastPosition.position, Vector2.down, 0.1f, m_GroundLayer);
 	}
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        //get the current time and see if its less than a threshold
+        if (m_isJumpInput && m_IsGrounded && (m_JumpBufferWait + m_jumpBufferLength > Time.time))
+        {
+            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+            m_isJumpInput = false;
+            Debug.Log(m_JumpBufferWait + m_jumpBufferLength);
+            Debug.Log(Time.time);
+        }
+    }
+
+    IEnumerator JumpBuffer()
+    {
+
+        while (true)
+        {
+            yield return null;
+        }
+    }
+
 }
