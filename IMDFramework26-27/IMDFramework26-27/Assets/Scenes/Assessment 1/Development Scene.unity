@@ -2316,6 +2316,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+<<<<<<< HEAD
+      propertyPath: m_coyoteTimeLength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
+=======
+>>>>>>> da920679a9b48e27b6711ab74fc2a574b09e931e
       propertyPath: m_jumpBufferLength
       value: 0.3
       objectReference: {fileID: 0}
