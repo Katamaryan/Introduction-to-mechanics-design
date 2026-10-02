@@ -16,6 +16,7 @@ public class CharacterMovement : MonoBehaviour
     private PlayerControls m_ActionMap;
     private bool m_IsGrounded;
     private bool m_isJumpInput;
+    private bool m_isJumpCanceled;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
 
@@ -33,7 +34,8 @@ public class CharacterMovement : MonoBehaviour
 
         m_ActionMap.Default.MoveHoriz.performed += Handle_MovePerformed;
         m_ActionMap.Default.MoveHoriz.canceled += Handle_MoveCancelled;
-        m_ActionMap.Default.Jump.performed += Handle_JumpPerformed;
+        m_ActionMap.Default.Jump.started += Handle_JumpPerformed;
+        m_ActionMap.Default.Jump.canceled += Handle_JumpPerformed;
     }
 
     private void OnDisable()
@@ -42,7 +44,8 @@ public class CharacterMovement : MonoBehaviour
 
         m_ActionMap.Default.MoveHoriz.performed -= Handle_MovePerformed;
         m_ActionMap.Default.MoveHoriz.canceled -= Handle_MoveCancelled;
-        m_ActionMap.Default.Jump.performed -= Handle_JumpPerformed;
+        m_ActionMap.Default.Jump.started -= Handle_JumpPerformed;
+        m_ActionMap.Default.Jump.canceled -= Handle_JumpPerformed;
     }
     #endregion
 
@@ -64,8 +67,18 @@ public class CharacterMovement : MonoBehaviour
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
-        m_isJumpInput = true;
+        if (context.started)
+        {
+            m_isJumpInput = true;
+            Debug.Log(m_isJumpInput);
+        }
+        if (context.canceled)
+        {
+            m_isJumpInput = false;
+            Debug.Log(m_isJumpInput);
+        }
     }
+
     #endregion
 
 
@@ -85,7 +98,12 @@ public class CharacterMovement : MonoBehaviour
             case JumpState.rising:
                 if (m_RB.linearVelocityY < 0.3f)
                     jumpState = JumpState.apexing;
-                break;
+                if (!m_isJumpInput)
+                {
+                    m_RB.linearVelocityY = -1f;
+                    jumpState = JumpState.falling;
+                }
+                    break;
             case JumpState.apexing:
                 m_RB.gravityScale = 0.3f;
                 if (m_RB.linearVelocityY < -0.2f)
@@ -96,33 +114,25 @@ public class CharacterMovement : MonoBehaviour
                 break;
             case JumpState.falling:
                 if (m_isJumpInput)
-                {
-                    m_JumpBufferWait = Time.time;
-                    m_isJumpInput = false;
-                }
+                    m_JumpBufferWait = Time.time;                   
                 if (m_IsGrounded)
                     jumpState = JumpState.grounded;
                 break;
             case JumpState.grounded:
                 if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
-                {
                     jumpState = JumpState.falling;
-                }
                 if (m_isJumpInput)
                 {
-                    m_isJumpInput = false;
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                     jumpState = JumpState.rising;
                 }
                 if (m_JumpBufferWait + m_jumpBufferLength > Time.time)
                 {
-                    m_isJumpInput = false;
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                     jumpState = JumpState.rising;
                 }
                 break;
         }
-                Debug.Log(jumpState);
 
 	}
 
