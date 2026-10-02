@@ -105,6 +105,7 @@ public class CharacterMovement : MonoBehaviour
                 }
                     break;
             case JumpState.apexing:
+                m_isJumpInput = false;
                 m_RB.gravityScale = 0.3f;
                 if (m_RB.linearVelocityY < -0.2f)
                 {
@@ -121,7 +122,7 @@ public class CharacterMovement : MonoBehaviour
             case JumpState.grounded:
                 if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
                     jumpState = JumpState.falling;
-                if (m_isJumpInput)
+                if (m_isJumpInput && !(m_JumpBufferWait + m_jumpBufferLength > Time.time))
                 {
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                     jumpState = JumpState.rising;
