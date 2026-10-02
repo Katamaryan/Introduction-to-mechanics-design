@@ -16,7 +16,8 @@ public class CharacterMovement : MonoBehaviour
     private PlayerControls m_ActionMap;
     private bool m_IsGrounded;
     private bool m_isJumpInput;
-    [SerializeField]  private float m_jumpBufferLength = 1;
+    [SerializeField]  private float m_jumpBufferLength;
+    [SerializeField] private float m_coyoteTimeLength;
 
     private void Awake()
     {
@@ -58,41 +59,27 @@ public class CharacterMovement : MonoBehaviour
 
 
     float m_JumpBufferWait;
+    float m_coyoteTimer;
 
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
         m_isJumpInput = true;
-        if (m_IsGrounded)
-        {
-            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-            m_isJumpInput = false;
-        }
-        else// we are in the air
-        {
-            //save the current time
-            //timeInAir = Time.time;
-            m_JumpBufferWait = Time.time;
-            Debug.Log(m_JumpBufferWait);
-        }
 
-
-
-        //else if (m_isJumpInput == 1)
+        //if (m_IsGrounded || (m_coyoteTimer + m_coyoteTimeLength > Time.time && !m_IsGrounded))
         //{
-        //    m_isJumpInput = ;
-
-        //    while (m_JumpBufferWait > Time.deltaTime)
-        //    {
-        //        if (m_IsGrounded)
-        //        {
-        //            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-        //            break;
-        //        }
-
-        //    }
+        //    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+        //    m_isJumpInput = false;
 
         //}
+        //else// we are in the air
+        //{
+        //    //save the current time
+        //    m_JumpBufferWait = Time.time;
+        //    Debug.Log(m_JumpBufferWait);
+        //}
+
+        
     }
     #endregion
 
@@ -102,28 +89,78 @@ public class CharacterMovement : MonoBehaviour
 		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
         m_IsGrounded = Physics2D.Raycast(m_RaycastPosition.position, Vector2.down, 0.1f, m_GroundLayer);
+
+        if (m_IsGrounded)
+        {
+            m_coyoteTimer = Time.time;
+        }
+        
+        switch(jumpState)
+        {
+            case JumpState.rising:
+                if (m_RB.linearVelocityY < 0.3f)
+                    jumpState = JumpState.apexing;
+                break;
+            case JumpState.apexing:
+                m_RB.gravityScale = 0.3f;
+                if (m_RB.linearVelocityY < -0.2f)
+                {
+                    m_RB.gravityScale = 1f;
+                    jumpState = JumpState.falling;
+                }
+                break;
+            case JumpState.falling:
+                if (m_isJumpInput)
+                {
+                    m_JumpBufferWait = Time.time;
+                    m_isJumpInput = false;
+                }
+                if (m_IsGrounded)
+                    jumpState = JumpState.grounded;
+                break;
+            case JumpState.grounded:
+                if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
+                {
+                    jumpState = JumpState.falling;
+                }
+                if (m_isJumpInput)
+                {
+                    m_isJumpInput = false;
+                    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+                    jumpState = JumpState.rising;
+                }
+                if (m_JumpBufferWait + m_jumpBufferLength > Time.time)
+                {
+                    m_isJumpInput = false;
+                    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+                    jumpState = JumpState.rising;
+                }
+                break;
+        }
+                Debug.Log(jumpState);
+
 	}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
         //get the current time and see if its less than a threshold
-        if (m_isJumpInput && m_IsGrounded && (m_JumpBufferWait + m_jumpBufferLength > Time.time))
-        {
-            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-            m_isJumpInput = false;
-            Debug.Log(m_JumpBufferWait + m_jumpBufferLength);
-            Debug.Log(Time.time);
-        }
+        //if (m_isJumpInput && m_IsGrounded && (m_JumpBufferWait + m_jumpBufferLength > Time.time))
+        //{
+        //    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+        //    m_isJumpInput = false;
+        //    Debug.Log(m_JumpBufferWait + m_jumpBufferLength);
+        //    Debug.Log(Time.time);
+        //}
     }
 
-    IEnumerator JumpBuffer()
+    enum JumpState
     {
-
-        while (true)
-        {
-            yield return null;
-        }
+        rising,
+        apexing,
+        falling,
+        grounded
     }
-
+    JumpState jumpState = JumpState.grounded;
+    
 }
