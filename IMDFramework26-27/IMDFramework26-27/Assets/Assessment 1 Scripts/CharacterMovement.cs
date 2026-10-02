@@ -65,21 +65,6 @@ public class CharacterMovement : MonoBehaviour
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
         m_isJumpInput = true;
-
-        //if (m_IsGrounded || (m_coyoteTimer + m_coyoteTimeLength > Time.time && !m_IsGrounded))
-        //{
-        //    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-        //    m_isJumpInput = false;
-
-        //}
-        //else// we are in the air
-        //{
-        //    //save the current time
-        //    m_JumpBufferWait = Time.time;
-        //    Debug.Log(m_JumpBufferWait);
-        //}
-
-        
     }
     #endregion
 
@@ -140,19 +125,6 @@ public class CharacterMovement : MonoBehaviour
                 Debug.Log(jumpState);
 
 	}
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-
-        //get the current time and see if its less than a threshold
-        //if (m_isJumpInput && m_IsGrounded && (m_JumpBufferWait + m_jumpBufferLength > Time.time))
-        //{
-        //    m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-        //    m_isJumpInput = false;
-        //    Debug.Log(m_JumpBufferWait + m_jumpBufferLength);
-        //    Debug.Log(Time.time);
-        //}
-    }
 
     enum JumpState
     {
