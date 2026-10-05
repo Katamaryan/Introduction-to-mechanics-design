@@ -13,70 +13,42 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private Transform m_RaycastPosition;
 	[SerializeField] private LayerMask m_GroundLayer;
 	private float m_InMove;
-    private PlayerControls m_ActionMap;
     private bool m_IsGrounded;
     private bool m_isJumpInput;
-    private bool m_isJumpCanceled;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
 
     private void Awake()
     {
-        m_ActionMap = new PlayerControls();
-
 		m_RB = GetComponent<Rigidbody2D>();
     }
 
-    #region Bindings
-    private void OnEnable()
-    {
-        m_ActionMap.Enable();
-
-        m_ActionMap.Default.MoveHoriz.performed += Handle_MovePerformed;
-        m_ActionMap.Default.MoveHoriz.canceled += Handle_MoveCancelled;
-        m_ActionMap.Default.Jump.started += Handle_JumpPerformed;
-        m_ActionMap.Default.Jump.canceled += Handle_JumpPerformed;
-    }
-
-    private void OnDisable()
-    {
-        m_ActionMap.Disable();
-
-        m_ActionMap.Default.MoveHoriz.performed -= Handle_MovePerformed;
-        m_ActionMap.Default.MoveHoriz.canceled -= Handle_MoveCancelled;
-        m_ActionMap.Default.Jump.started -= Handle_JumpPerformed;
-        m_ActionMap.Default.Jump.canceled -= Handle_JumpPerformed;
-    }
-    #endregion
-
     #region InputFunctions
 
-    private void Handle_MovePerformed(InputAction.CallbackContext context)
+    public void MovePerformed(float direction)
     {
-        m_InMove = context.ReadValue<float>();
+        m_InMove = direction;
     }
-    private void Handle_MoveCancelled(InputAction.CallbackContext context)
+    public void MoveCancelled()
     {
         m_InMove = 0f;
     }
 
 
-    float m_JumpBufferWait;
+    float m_jumpBufferWait;
     float m_coyoteTimer;
 
 
-    private void Handle_JumpPerformed(InputAction.CallbackContext context)
+    public void JumpPerformed()
     {
-        if (context.started)
-        {
-            m_isJumpInput = true;
-            Debug.Log(m_isJumpInput);
-        }
-        if (context.canceled)
-        {
-            m_isJumpInput = false;
-            Debug.Log(m_isJumpInput);
-        }
+        m_isJumpInput = true;
+        //Debug.Log(m_isJumpInput);   
+    }
+
+    public void JumpCanceled()
+    {
+        m_isJumpInput = false;
+        //Debug.Log(m_isJumpInput);
     }
 
     #endregion
@@ -88,22 +60,21 @@ public class CharacterMovement : MonoBehaviour
 
         m_IsGrounded = Physics2D.Raycast(m_RaycastPosition.position, Vector2.down, 0.1f, m_GroundLayer);
 
-        if (m_IsGrounded)
-        {
-            m_coyoteTimer = Time.time;
-        }
-        
-        switch(jumpState)
+
+        switch (jumpState)
         {
             case JumpState.rising:
                 if (m_RB.linearVelocityY < 0.3f)
+                {
                     jumpState = JumpState.apexing;
+                    break;
+                }
                 if (!m_isJumpInput)
                 {
                     m_RB.linearVelocityY = -1f;
                     jumpState = JumpState.falling;
                 }
-                    break;
+                break;
             case JumpState.apexing:
                 m_isJumpInput = false;
                 m_RB.gravityScale = 0.3f;
@@ -114,27 +85,43 @@ public class CharacterMovement : MonoBehaviour
                 }
                 break;
             case JumpState.falling:
-                if (m_isJumpInput)
-                    m_JumpBufferWait = Time.time;                   
+                if (m_isJumpInput && m_jumpBufferWait == 0f)
+                {
+                    m_jumpBufferWait = Time.time;
+                    Debug.Log(m_jumpBufferWait);
+                }
+                if ((m_isJumpInput && (m_jumpBufferWait + m_jumpBufferLength < Time.time)) || !m_isJumpInput)
+                { 
+                    m_isJumpInput = false;
+                    m_jumpBufferWait = 0f;
+                }
                 if (m_IsGrounded)
                     jumpState = JumpState.grounded;
                 break;
             case JumpState.grounded:
+                if (m_IsGrounded)
+                    m_coyoteTimer = Time.time;
                 if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
                     jumpState = JumpState.falling;
-                if (m_isJumpInput && !(m_JumpBufferWait + m_jumpBufferLength > Time.time))
+                if (m_isJumpInput && !(m_jumpBufferWait + m_jumpBufferLength > Time.time))
                 {
+                    Debug.Log("Attempting jump");
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+                    m_jumpBufferWait = 0f;
                     jumpState = JumpState.rising;
                 }
-                if (m_JumpBufferWait + m_jumpBufferLength > Time.time)
+
+                if (m_jumpBufferWait + m_jumpBufferLength > Time.time)
                 {
+                    Debug.Log("Attempting jump");
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+                    m_jumpBufferWait = 0f;
                     jumpState = JumpState.rising;
                 }
+
                 break;
         }
-
+        //Debug.Log(jumpState);
 	}
 
     enum JumpState
