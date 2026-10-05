@@ -10,10 +10,8 @@ public class CharacterMovement : MonoBehaviour
 
 	[SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
-	[SerializeField] private Transform m_RaycastPosition;
-	[SerializeField] private LayerMask m_GroundLayer;
-	private float m_InMove;
-    private bool m_IsGrounded;
+    private float m_InMove;
+    public bool m_IsGrounded;
     private bool m_isJumpInput;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
@@ -42,33 +40,31 @@ public class CharacterMovement : MonoBehaviour
     public void JumpPerformed()
     {
         m_isJumpInput = true;
-        //Debug.Log(m_isJumpInput);   
     }
 
     public void JumpCanceled()
     {
         m_isJumpInput = false;
-        //Debug.Log(m_isJumpInput);
     }
 
     #endregion
 
+    
 
 	private void FixedUpdate()
 	{
 		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
-        m_IsGrounded = Physics2D.Raycast(m_RaycastPosition.position, Vector2.down, 0.1f, m_GroundLayer);
-
-
         switch (jumpState)
         {
             case JumpState.rising:
+                //Checks when the apex of the jump has been reached 
                 if (m_RB.linearVelocityY < 0.3f)
                 {
                     jumpState = JumpState.apexing;
                     break;
                 }
+                //checks if the jump has been ended early from letting go of jump button in style of metroid from gba and earlier (havent played dread yet)
                 if (!m_isJumpInput)
                 {
                     m_RB.linearVelocityY = -1f;
@@ -76,7 +72,9 @@ public class CharacterMovement : MonoBehaviour
                 }
                 break;
             case JumpState.apexing:
+                //prevents the player from holding jump to automatically jump upon hitting the ground
                 m_isJumpInput = false;
+                //slows player while in apex until falling fast enough to be considerd falling
                 m_RB.gravityScale = 0.3f;
                 if (m_RB.linearVelocityY < -0.2f)
                 {
@@ -85,11 +83,13 @@ public class CharacterMovement : MonoBehaviour
                 }
                 break;
             case JumpState.falling:
+                //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
                 if (m_isJumpInput && m_jumpBufferWait == 0f)
                 {
                     m_jumpBufferWait = Time.time;
                     Debug.Log(m_jumpBufferWait);
                 }
+                // checks if the jump is held too early and resets it and the jump buffer time stamp also allows for player to reset jump buffer if accidentally pressed too early and let go
                 if ((m_isJumpInput && (m_jumpBufferWait + m_jumpBufferLength < Time.time)) || !m_isJumpInput)
                 { 
                     m_isJumpInput = false;
@@ -99,21 +99,24 @@ public class CharacterMovement : MonoBehaviour
                     jumpState = JumpState.grounded;
                 break;
             case JumpState.grounded:
+                //constantly sets coyote time while grounded
                 if (m_IsGrounded)
                     m_coyoteTimer = Time.time;
+                //changes state if not on ground and coyote time ran out
                 if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
                     jumpState = JumpState.falling;
+                // allows player to jump when on the ground (also has a check to prevent a perfectly timed super jump, could be fun idea for different project)
                 if (m_isJumpInput && !(m_jumpBufferWait + m_jumpBufferLength > Time.time))
                 {
-                    Debug.Log("Attempting jump");
+                    //Debug.Log("Attempting jump");
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                     m_jumpBufferWait = 0f;
                     jumpState = JumpState.rising;
                 }
-
+                //allows jump when ground is hit during jump buffer timing 
                 if (m_jumpBufferWait + m_jumpBufferLength > Time.time)
                 {
-                    Debug.Log("Attempting jump");
+                    //Debug.Log("Attempting jump");
                     m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                     m_jumpBufferWait = 0f;
                     jumpState = JumpState.rising;
