@@ -2368,11 +2368,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_coyoteTimeLength
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 929667974029550097, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_jumpBufferLength
-      value: 0.3
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 969958807700409231, guid: 3357c003e0755d64c8b53ac23d3acd15, type: 3}
       propertyPath: m_CollisionDetection

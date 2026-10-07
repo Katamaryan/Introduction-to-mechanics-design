@@ -41,7 +41,7 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_MoveCancelled(InputAction.CallbackContext context)
     {
-        m_CharacterMovement.MoveCancelled();
+        m_CharacterMovement.SetInMove(0);
     }
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)

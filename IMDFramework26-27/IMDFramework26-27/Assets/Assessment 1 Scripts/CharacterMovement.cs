@@ -15,6 +15,8 @@ public class CharacterMovement : MonoBehaviour
     private bool m_isJumpInput;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
+    private Coroutine m_CMove;
+    private bool m_isMoveActive;
 
     private void Awake()
     {
@@ -26,15 +28,39 @@ public class CharacterMovement : MonoBehaviour
     public void MovePerformed(float direction)
     {
         m_InMove = direction;
+        
+        if (m_InMove == 0)
+        {
+            m_isMoveActive = false;
+        }
+
+        else
+        {
+            if (m_isMoveActive) { return; }
+            m_isMoveActive = true;
+            m_CMove = StartCoroutine(C_MoveUpdate());
+        }
     }
-    public void MoveCancelled()
+    public void SetInMove(float direction)
     {
-        m_InMove = 0f;
+        m_InMove = direction;
+
+        if (m_InMove == 0)
+        {
+            m_isMoveActive = false;
+        }
+        else
+        {
+            if (m_isMoveActive) { return; }
+            m_isMoveActive = true;
+            m_CMove = StartCoroutine(C_MoveUpdate());
+            
+        }
     }
 
 
-    float m_jumpBufferWait;
-    float m_coyoteTimer;
+    private float m_jumpBufferWait;
+    private float m_coyoteTimer;
 
 
     public void JumpPerformed()
@@ -53,7 +79,6 @@ public class CharacterMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
         switch (jumpState)
         {
@@ -61,19 +86,19 @@ public class CharacterMovement : MonoBehaviour
                 //Checks when the apex of the jump has been reached 
                 if (m_RB.linearVelocityY < 0.3f)
                 {
+                    //prevents the player from holding jump to automatically jump upon hitting the ground
+                    m_isJumpInput = false;
                     jumpState = JumpState.apexing;
                     break;
                 }
                 //checks if the jump has been ended early from letting go of jump button in style of metroid from gba and earlier (havent played dread yet)
                 if (!m_isJumpInput)
                 {
-                    m_RB.linearVelocityY = -1f;
+                    m_RB.linearVelocityY = -0.5f;
                     jumpState = JumpState.falling;
                 }
                 break;
             case JumpState.apexing:
-                //prevents the player from holding jump to automatically jump upon hitting the ground
-                m_isJumpInput = false;
                 //slows player while in apex until falling fast enough to be considerd falling
                 m_RB.gravityScale = 0.3f;
                 if (m_RB.linearVelocityY < -0.2f)
@@ -126,6 +151,16 @@ public class CharacterMovement : MonoBehaviour
         }
         //Debug.Log(jumpState);
 	}
+
+    IEnumerator C_MoveUpdate()
+    {
+        while (m_isMoveActive)
+        {
+            yield return new WaitForFixedUpdate();
+
+            m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
+        }
+    }
 
     enum JumpState
     {
