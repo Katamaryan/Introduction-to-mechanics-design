@@ -19,6 +19,9 @@ public class GroundCheck : MonoBehaviour
     {
         m_isGrounded = Physics2D.BoxCast(m_RaycastPosition.position, m_boxCastSize, 0f, Vector2.down, 0.1f, m_GroundLayer);
         m_CharacterMovement.m_IsGrounded = m_isGrounded;
+        //constantly sets coyote time while grounded
+        if (m_CharacterMovement.m_IsGrounded)
+            m_CharacterMovement.m_coyoteTimer = Time.time;
     }
 
 
