@@ -1,14 +1,16 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
     public Transform m_target;
-    private Vector2 m_currentPos;
 
-    void FixedUpdate()
+    private void Start()
     {
-        m_currentPos.x = m_target.position.x;
-        transform.position = m_target.position;
+    }
+    private void FixedUpdate()
+    { 
+        transform.position = Vector3.Lerp(transform.position, m_target.position, 10);
     }
 
 }

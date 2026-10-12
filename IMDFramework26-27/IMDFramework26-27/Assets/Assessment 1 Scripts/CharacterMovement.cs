@@ -91,7 +91,7 @@ public class CharacterMovement : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-            Debug.Log("the move coroutine is alive");
+            //Debug.Log("the move coroutine is alive");
         }
     }
 
@@ -171,7 +171,7 @@ public class CharacterMovement : MonoBehaviour
                     }
                     break;
             }
-            Debug.Log("the jump coroutine is alive");
+            //Debug.Log("the jump coroutine is alive");
             //Debug.Log(jumpState);
         }
     }
