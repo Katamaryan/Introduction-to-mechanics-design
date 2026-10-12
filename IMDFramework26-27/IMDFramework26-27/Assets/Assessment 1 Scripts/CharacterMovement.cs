@@ -176,11 +176,6 @@ public class CharacterMovement : MonoBehaviour
         }
     }
     #endregion
-    
-	private void FixedUpdate()
-	{
-
-	}
 
     public void init()
     {

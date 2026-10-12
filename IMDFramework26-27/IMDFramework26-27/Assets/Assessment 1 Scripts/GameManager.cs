@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
         m_cameraRef = Instantiate(m_CameraPrefab);
 
         m_playerRef.GetComponent<CharacterMovement>().init();
+        //gets camerafollower
         m_cameraFollowerRef = m_playerRef.transform.GetChild(3);
         m_cameraRef.GetComponent<CameraManager>().m_target = m_cameraFollowerRef;
     }
