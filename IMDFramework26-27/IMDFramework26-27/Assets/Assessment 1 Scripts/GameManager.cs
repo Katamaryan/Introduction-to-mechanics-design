@@ -1,0 +1,21 @@
+using UnityEngine;
+
+public class GameManager : MonoBehaviour
+{
+    [SerializeField] private GameObject m_PlayerPrefab;
+    private GameObject m_playerRef;
+    [SerializeField] private GameObject m_CameraPrefab; 
+    private GameObject m_cameraRef;
+
+    void Start()
+    {
+        m_playerRef = Instantiate(m_PlayerPrefab);
+        m_cameraRef = Instantiate(m_CameraPrefab);
+
+        m_playerRef.GetComponent<CharacterMovement>().init();
+        m_cameraRef.GetComponent<CameraManager>().m_target = m_playerRef.transform;
+    }
+
+    
+
+}

@@ -82,12 +82,7 @@ public class CharacterMovement : MonoBehaviour
 
     #endregion
 
-    
-
-	private void FixedUpdate()
-	{
-
-	}
+    #region Coroutines
 
     IEnumerator C_MoveUpdate()
     {
@@ -179,6 +174,17 @@ public class CharacterMovement : MonoBehaviour
             Debug.Log("the jump coroutine is alive");
             //Debug.Log(jumpState);
         }
+    }
+    #endregion
+    
+	private void FixedUpdate()
+	{
+
+	}
+
+    public void init()
+    {
+        Debug.Log("Spawned in from the Game Manager");
     }
 
     enum JumpState
