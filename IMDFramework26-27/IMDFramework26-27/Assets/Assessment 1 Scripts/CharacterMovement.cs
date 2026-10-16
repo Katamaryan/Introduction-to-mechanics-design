@@ -15,6 +15,7 @@ public class CharacterMovement : MonoBehaviour
     private bool m_InJump;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
+    [SerializeField] private float m_apexGravScale;
     private Coroutine m_CMove;
     private bool m_isMoveActive;
     private Coroutine m_CJump;
@@ -78,6 +79,8 @@ public class CharacterMovement : MonoBehaviour
     public void JumpCanceled()
     {
         m_InJump = false;
+
+        //playerCol.size = verticalSizeNormal;
     }
 
     #endregion
@@ -95,8 +98,19 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
+    [SerializeField] CapsuleCollider2D playerCol;
+
+    [SerializeField] Vector2 verticalPinchSize;
+    [SerializeField] Vector2 verticalSizeNormal;
+
     IEnumerator C_JumpUpdate()
     {
+
+        //if (m_RB.linearVelocityX < 0.5f)
+        //{
+        //    playerCol.size = verticalPinchSize;
+        //}
+        
         while (m_isJumpActive)
         {
             yield return new WaitForFixedUpdate();
@@ -120,7 +134,7 @@ public class CharacterMovement : MonoBehaviour
                     break;
                 case JumpState.apexing:
                     //slows player while in apex until falling fast enough to be considerd falling
-                    m_RB.gravityScale = 0.3f;
+                    m_RB.gravityScale = m_apexGravScale;
                     if (m_RB.linearVelocityY < -0.2f)
                     {
                         m_RB.gravityScale = 1f;
