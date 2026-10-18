@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84668603c025a854aaea6646e584b070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  m_maxHealth: 0
 --- !u!96 &8042820046549532902
 TrailRenderer:
   serializedVersion: 4
@@ -248,7 +249,6 @@ GameObject:
   - component: {fileID: 5406072704542687043}
   - component: {fileID: 4855070989235704345}
   - component: {fileID: 5404571805249445837}
-  - component: {fileID: 1563181455396192899}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -320,43 +320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5757fd166c3fff43bfa1f5d028f5aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColliderPinch
---- !u!70 &1563181455396192899
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062927974038001864}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
-  m_Direction: 0
+  m_playerCol: {fileID: 4855070989235704345}
+  m_verticalSizeNormal: {x: 1, y: 2}
+  m_verticalSizePinch: {x: 0.1, y: 2}
+  m_headBumpLength: 0.1
 --- !u!1 &3512348977773530507
 GameObject:
   m_ObjectHideFlags: 0

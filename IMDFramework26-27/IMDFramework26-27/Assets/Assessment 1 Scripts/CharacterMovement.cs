@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,7 +9,9 @@ public class CharacterMovement : MonoBehaviour
 {
 	private Rigidbody2D m_RB;
 
-	[SerializeField] private float m_MoveSpeed;
+    public event Action<int> onJumpStateChange;
+
+    [SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
     private float m_InMove;
     public bool m_IsGrounded;
@@ -117,12 +120,18 @@ public class CharacterMovement : MonoBehaviour
             switch (jumpState)
             {
                 case JumpState.rising:
+                    
+                    //tells other scripts what jump state the player is in
+                    onJumpStateChange?.Invoke(0);
+                
                     //Checks when the apex of the jump has been reached 
                     if (m_RB.linearVelocityY < 0.3f)
                     {
                         //prevents the player from holding jump to automatically jump upon hitting the ground
                         m_InJump = false;
                         jumpState = JumpState.apexing;
+
+                        
                         break;
                     }
                     //checks if the jump has been ended early from letting go of jump button in style of metroid from gba and earlier (havent played dread yet)
@@ -133,6 +142,9 @@ public class CharacterMovement : MonoBehaviour
                     }
                     break;
                 case JumpState.apexing:
+
+                    onJumpStateChange?.Invoke(1);
+
                     //slows player while in apex until falling fast enough to be considerd falling
                     m_RB.gravityScale = m_apexGravScale;
                     if (m_RB.linearVelocityY < -0.2f)
@@ -142,6 +154,9 @@ public class CharacterMovement : MonoBehaviour
                     }
                     break;
                 case JumpState.falling:
+
+                    onJumpStateChange?.Invoke(2);
+
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
                     {
@@ -161,6 +176,9 @@ public class CharacterMovement : MonoBehaviour
                     }
                     break;
                 case JumpState.grounded:
+
+                    onJumpStateChange?.Invoke(3);
+
                     //changes state if not on ground and coyote time ran out
                     if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
                     {
@@ -191,17 +209,16 @@ public class CharacterMovement : MonoBehaviour
     }
     #endregion
 
-    public void init()
-    {
-        Debug.Log("Spawned in from the Game Manager");
-    }
+    
 
     enum JumpState
     {
+        //0 = rising, 1 = apexing, 2 = falling, 3 = grounded
         rising,
         apexing,
         falling,
         grounded
+    
     }
     JumpState jumpState = JumpState.grounded;
     

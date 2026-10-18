@@ -2,16 +2,19 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    #region Component references
     private CharacterMovement m_characterMovement;
     private GroundCheck m_groundCheck;
     private InputHandler m_inputHandler;
     private ColliderPinch m_colliderPinch;
     private HealthComponent m_healthComponent;
 
+    #endregion
+
     void Awake()
     {
         m_characterMovement = GetComponent<CharacterMovement>();
-        m_colliderPinch = GetComponent<ColliderPinch>();
+        m_colliderPinch = transform.GetChild(2).GetComponent<ColliderPinch>();
         m_groundCheck = GetComponent<GroundCheck>();
         m_inputHandler = GetComponent<InputHandler>();
         m_healthComponent = GetComponent<HealthComponent>();
@@ -25,6 +28,7 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMoveCanceled += m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
+        m_characterMovement.onJumpStateChange += m_colliderPinch.ColliderSizeChange;
     }
 
     private void OnDestroy()
@@ -34,7 +38,8 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMovePerformed -= m_characterMovement.MovePerformed;
         m_inputHandler.onMoveCanceled -= m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
-        m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
+        m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
+        m_characterMovement.onJumpStateChange -= m_colliderPinch.ColliderSizeChange;
     }
 
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)
@@ -48,5 +53,9 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-   
+    public void init()
+    {
+        Debug.Log("Spawned in from the Game Manager");
+    }
+
 }
