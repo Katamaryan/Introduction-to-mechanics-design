@@ -21,12 +21,20 @@ public class PlayerManager : MonoBehaviour
     {
         m_healthComponent.onDamaged += Handle_OnHealthDamaged;
         m_healthComponent.onDead += Handle_OnPlayerDeath;
+        m_inputHandler.onMovePerformed += m_characterMovement.MovePerformed;
+        m_inputHandler.onMoveCanceled += m_characterMovement.SetInMove;
+        m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
+        m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
     }
 
     private void OnDestroy()
     {
         m_healthComponent.onDamaged -= Handle_OnHealthDamaged;
         m_healthComponent.onDead -= Handle_OnPlayerDeath;
+        m_inputHandler.onMovePerformed -= m_characterMovement.MovePerformed;
+        m_inputHandler.onMoveCanceled -= m_characterMovement.SetInMove;
+        m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
+        m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
     }
 
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)
