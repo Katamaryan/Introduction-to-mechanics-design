@@ -27,10 +27,8 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMovePerformed += m_characterMovement.MovePerformed;
         m_inputHandler.onMoveCanceled += m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
-        m_inputHandler.onJumpPerformed += m_colliderPinch.JumpPerformed;
         m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
-        m_inputHandler.onJumpCanceled += m_colliderPinch.JumpCanceled;
-       // m_characterMovement.onJumpStateChange += m_colliderPinch.ColliderSizeChange;
+        m_characterMovement.onJumpStateChange += m_colliderPinch.Pinch;
     }
 
     private void OnDestroy()
@@ -40,10 +38,8 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMovePerformed -= m_characterMovement.MovePerformed;
         m_inputHandler.onMoveCanceled -= m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
-        m_inputHandler.onJumpPerformed -= m_colliderPinch.JumpPerformed;
         m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
-        m_inputHandler.onJumpCanceled -= m_colliderPinch.JumpCanceled;
-        //m_characterMovement.onJumpStateChange -= m_colliderPinch.ColliderSizeChange;
+        m_characterMovement.onJumpStateChange -= m_colliderPinch.Pinch;
     }
 
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)

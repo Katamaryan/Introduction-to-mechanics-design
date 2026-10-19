@@ -9,7 +9,7 @@ public class CharacterMovement : MonoBehaviour
 {
 	private Rigidbody2D m_RB;
 
-    public event Action<int> onJumpStateChange;
+    public event Action<int, float> onJumpStateChange;
 
     [SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
@@ -19,6 +19,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
     [SerializeField] private float m_apexGravScale;
+    [SerializeField] private float m_variableJumpStrength;
     private Coroutine m_CMove;
     private bool m_isMoveActive;
     private Coroutine m_CJump;
@@ -82,8 +83,6 @@ public class CharacterMovement : MonoBehaviour
     public void JumpCanceled()
     {
         m_InJump = false;
-
-        //playerCol.size = verticalSizeNormal;
     }
 
     #endregion
@@ -101,19 +100,9 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    [SerializeField] CapsuleCollider2D playerCol;
-
-    [SerializeField] Vector2 verticalPinchSize;
-    [SerializeField] Vector2 verticalSizeNormal;
-
     IEnumerator C_JumpUpdate()
     {
 
-        //if (m_RB.linearVelocityX < 0.5f)
-        //{
-        //    playerCol.size = verticalPinchSize;
-        //}
-        
         while (m_isJumpActive)
         {
             yield return new WaitForFixedUpdate();
@@ -122,7 +111,7 @@ public class CharacterMovement : MonoBehaviour
                 case JumpState.rising:
                     
                     //tells other scripts what jump state the player is in
-                    onJumpStateChange?.Invoke(0);
+                    onJumpStateChange?.Invoke(0, m_RB.linearVelocityX);
                 
                     //Checks when the apex of the jump has been reached 
                     if (m_RB.linearVelocityY < 0.3f)
@@ -137,13 +126,13 @@ public class CharacterMovement : MonoBehaviour
                     //checks if the jump has been ended early from letting go of jump button in style of metroid from gba and earlier (havent played dread yet)
                     if (!m_InJump)
                     {
-                        m_RB.linearVelocityY = -0.5f;
+                        m_RB.linearVelocityY = m_variableJumpStrength;
                         jumpState = JumpState.falling;
                     }
                     break;
                 case JumpState.apexing:
 
-                    onJumpStateChange?.Invoke(1);
+                    onJumpStateChange?.Invoke(1, m_RB.linearVelocityX);
 
                     //slows player while in apex until falling fast enough to be considerd falling
                     m_RB.gravityScale = m_apexGravScale;
@@ -155,7 +144,7 @@ public class CharacterMovement : MonoBehaviour
                     break;
                 case JumpState.falling:
 
-                    onJumpStateChange?.Invoke(2);
+                    onJumpStateChange?.Invoke(2, m_RB.linearVelocityX);
 
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
@@ -172,12 +161,11 @@ public class CharacterMovement : MonoBehaviour
                     if (m_IsGrounded)
                     {
                         jumpState = JumpState.grounded;
-                        m_isJumpActive = false;
                     }
                     break;
                 case JumpState.grounded:
 
-                    onJumpStateChange?.Invoke(3);
+                    onJumpStateChange?.Invoke(3, m_RB.linearVelocityX);
 
                     //changes state if not on ground and coyote time ran out
                     if (!m_IsGrounded && m_coyoteTimer + m_coyoteTimeLength < Time.time)
@@ -200,6 +188,10 @@ public class CharacterMovement : MonoBehaviour
                         m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
                         m_jumpBufferWait = 0f;
                         jumpState = JumpState.rising;
+                    }
+                    if(!m_InJump) 
+                    {
+                        m_isJumpActive = false;
                     }
                     break;
             }

@@ -108,13 +108,11 @@ MonoBehaviour:
   m_MoveSpeed: 5
   m_JumpStrength: 10
   m_IsGrounded: 0
-  m_jumpBufferLength: 0.1
+  m_jumpBufferLength: 0.2
   m_coyoteTimeLength: 0.2
   m_apexGravScale: 0.1
+  m_variableJumpStrength: -0.1
   m_coyoteTimer: 0
-  playerCol: {fileID: 4855070989235704345}
-  verticalPinchSize: {x: 0.2, y: 2}
-  verticalSizeNormal: {x: 1, y: 2}
 --- !u!114 &4464383447647639941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -323,8 +321,12 @@ MonoBehaviour:
   m_playerCol: {fileID: 4855070989235704345}
   m_RB: {fileID: 969958807700409231}
   m_verticalSizeNormal: {x: 1, y: 2}
-  m_verticalSizePinch: {x: 0.1, y: 2}
-  m_headBumpLength: 0.1
+  m_verticalSizePinch: {x: 0.3, y: 2}
+  m_groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  m_overlapCheckBuffer: 0.15
+  m_colliderResetBuffer: 0.05
 --- !u!1 &3512348977773530507
 GameObject:
   m_ObjectHideFlags: 0
