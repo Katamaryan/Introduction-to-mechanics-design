@@ -15,7 +15,7 @@ public class PlayerManager : MonoBehaviour
     {
         m_characterMovement = GetComponent<CharacterMovement>();
         m_colliderPinch = transform.GetChild(2).GetComponent<ColliderPinch>();
-        m_groundCheck = GetComponent<GroundCheck>();
+        m_groundCheck = transform.GetChild(0).GetComponent<GroundCheck>();
         m_inputHandler = GetComponent<InputHandler>();
         m_healthComponent = GetComponent<HealthComponent>();
     }
@@ -29,6 +29,7 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
         m_characterMovement.onJumpStateChange += m_colliderPinch.Pinch;
+        m_groundCheck.onGrounded += m_characterMovement.OnGrounded;
     }
 
     private void OnDestroy()
@@ -40,7 +41,10 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
         m_characterMovement.onJumpStateChange -= m_colliderPinch.Pinch;
+        m_groundCheck.onGrounded -= m_characterMovement.OnGrounded;
     }
+
+    
 
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)
     {

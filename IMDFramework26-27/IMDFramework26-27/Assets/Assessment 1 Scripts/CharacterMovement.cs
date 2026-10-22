@@ -15,6 +15,7 @@ public class CharacterMovement : MonoBehaviour
 	[SerializeField] private float m_JumpStrength;
     private float m_InMove;
     public bool m_IsGrounded;
+    public bool m_IsOnPlatform;
     private bool m_InJump;
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
@@ -31,12 +32,32 @@ public class CharacterMovement : MonoBehaviour
 		m_RB = GetComponent<Rigidbody2D>();
     }
 
+    public void OnGrounded(bool isGrounded, bool isOnPlatform)
+    {
+        m_IsGrounded = isGrounded;
+        m_IsOnPlatform = isOnPlatform;
+        if (isOnPlatform && !isGrounded)
+        {
+            m_IsGrounded = isOnPlatform;
+        }
+        if(m_IsGrounded)
+        {
+            m_coyoteTimer = Time.time;
+        }
+        //if( m_isJumpActive) { return; }
+        //m_isJumpActive = true;
+        //jumpState = JumpState.falling;
+        //m_CJump = StartCoroutine(C_JumpUpdate());
+
+    }
+
     #region InputFunctions
 
     public void MovePerformed(float direction)
     {
         m_InMove = direction;
         
+
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
@@ -52,6 +73,7 @@ public class CharacterMovement : MonoBehaviour
     public void SetInMove(float direction)
     {
         m_InMove = direction;
+
 
         if (m_InMove == 0)
         {
@@ -83,6 +105,11 @@ public class CharacterMovement : MonoBehaviour
     public void JumpCanceled()
     {
         m_InJump = false;
+    }
+
+    public void DropPerformed()
+    {
+        //Physics2D.IgnoreCollision()
     }
 
     #endregion
@@ -146,6 +173,12 @@ public class CharacterMovement : MonoBehaviour
 
                     onJumpStateChange?.Invoke(2, m_RB.linearVelocityX);
 
+                    //if(m_RB.linearVelocityY <= -1f)
+                    //{
+                    //    m_RB.linearVelocityY = -1f;
+                    //}
+                        //Mathf.Clamp(m_RB.linearVelocityY, -1f, 0f);
+
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
                     {
@@ -196,7 +229,7 @@ public class CharacterMovement : MonoBehaviour
                     break;
             }
             //Debug.Log("the jump coroutine is alive");
-            //Debug.Log(jumpState);
+            Debug.Log(jumpState);
         }
     }
     #endregion

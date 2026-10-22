@@ -12,6 +12,7 @@ public class InputHandler : MonoBehaviour
     public event Action<float> onMoveCanceled;
     public event Action onJumpPerformed;
     public event Action onJumpCanceled;
+    public event Action onDropPerformed;
 
     #endregion
     private PlayerControls m_ActionMap;
@@ -69,5 +70,8 @@ public class InputHandler : MonoBehaviour
         onJumpCanceled?.Invoke();
     }
 
-
+    private void Handle_DropPerformed()
+    {
+        onDropPerformed?.Invoke();
+    }
 }
