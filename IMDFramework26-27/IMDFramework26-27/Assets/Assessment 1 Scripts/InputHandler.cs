@@ -47,26 +47,22 @@ public class InputHandler : MonoBehaviour
     
     private void Handle_MovePerformed(InputAction.CallbackContext context)
     {
-        //m_CharacterMovement.MovePerformed(context.ReadValue<float>());
         onMovePerformed?.Invoke(context.ReadValue<float>());
     }
 
     private void Handle_MoveCancelled(InputAction.CallbackContext context)
     {
-        //m_CharacterMovement.SetInMove(0);
         onMoveCanceled?.Invoke(0);
     }
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
-        //m_CharacterMovement.JumpPerformed();
         //adding the question mark makes it so the code checks if the event is null be invoking and if is null then skips it
         onJumpPerformed?.Invoke();
     }
 
     private void Handle_JumpCanceled(InputAction.CallbackContext context)
     {
-        //m_CharacterMovement.JumpCanceled();
         onJumpCanceled?.Invoke();
     }
 

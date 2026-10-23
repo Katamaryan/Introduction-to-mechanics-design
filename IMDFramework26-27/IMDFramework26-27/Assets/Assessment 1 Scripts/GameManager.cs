@@ -6,12 +6,12 @@ public class GameManager : MonoBehaviour
     private GameObject m_playerRef;
     private Transform m_cameraFollowerRef;
     [SerializeField] private GameObject m_CameraPrefab; 
-    private GameObject m_cameraRef;
+    [SerializeField] private GameObject m_cameraRef;
 
     void Awake()
     {
         m_playerRef = Instantiate(m_PlayerPrefab);
-        m_cameraRef = Instantiate(m_CameraPrefab);
+        //m_cameraRef = Instantiate(m_CameraPrefab);
 
         m_playerRef.GetComponent<PlayerManager>().init();
         //gets camerafollower

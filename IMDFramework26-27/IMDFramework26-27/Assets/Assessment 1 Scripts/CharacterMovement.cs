@@ -43,12 +43,13 @@ public class CharacterMovement : MonoBehaviour
         if(m_IsGrounded)
         {
             m_coyoteTimer = Time.time;
+            return;
         }
-        //if( m_isJumpActive) { return; }
-        //m_isJumpActive = true;
-        //jumpState = JumpState.falling;
-        //m_CJump = StartCoroutine(C_JumpUpdate());
-
+        //if (m_isJumpActive) { return; }
+        //{
+        //    m_isJumpActive = true;
+        //    onJumpStateChange?.Invoke(4, m_RB.linearVelocityX);
+        //}
     }
 
     #region InputFunctions
@@ -107,6 +108,7 @@ public class CharacterMovement : MonoBehaviour
         m_InJump = false;
     }
 
+    //not in use atm, will implement later for relaxed semi solids
     public void DropPerformed()
     {
         //Physics2D.IgnoreCollision()
@@ -177,7 +179,7 @@ public class CharacterMovement : MonoBehaviour
                     //{
                     //    m_RB.linearVelocityY = -1f;
                     //}
-                        //Mathf.Clamp(m_RB.linearVelocityY, -1f, 0f);
+                        //m_RB.linearVelocityY = Mathf.Clamp(m_RB.linearVelocityY, -1f, 0f);
 
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
@@ -195,6 +197,7 @@ public class CharacterMovement : MonoBehaviour
                     {
                         jumpState = JumpState.grounded;
                     }
+                    Debug.Log(m_RB.linearVelocityY);
                     break;
                 case JumpState.grounded:
 
@@ -229,7 +232,7 @@ public class CharacterMovement : MonoBehaviour
                     break;
             }
             //Debug.Log("the jump coroutine is alive");
-            Debug.Log(jumpState);
+            //Debug.Log(jumpState);
         }
     }
     #endregion
