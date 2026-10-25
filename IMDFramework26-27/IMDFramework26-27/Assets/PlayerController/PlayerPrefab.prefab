@@ -113,6 +113,7 @@ MonoBehaviour:
   m_coyoteTimeLength: 0.2
   m_apexGravScale: 0.2
   m_variableJumpStrength: 1
+  m_fallSpeedClamp: -5
   m_coyoteTimer: 0
 --- !u!114 &4464383447647639941
 MonoBehaviour:
@@ -126,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84668603c025a854aaea6646e584b070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  m_maxHealth: 0
+  m_maxHealth: 3
 --- !u!96 &8042820046549532902
 TrailRenderer:
   serializedVersion: 4
@@ -329,7 +330,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   m_overlapCheckBuffer: 0.15
-  m_colliderResetBuffer: 0.05
+  m_verticalColliderResetBuffer: 0.2
+  m_horizontalColliderResetBuffer: 0.05
 --- !u!61 &8632643063295621059
 BoxCollider2D:
   m_ObjectHideFlags: 0

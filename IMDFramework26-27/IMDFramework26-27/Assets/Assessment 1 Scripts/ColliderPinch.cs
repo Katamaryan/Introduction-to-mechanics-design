@@ -10,7 +10,8 @@ public class ColliderPinch : MonoBehaviour
     [SerializeField] private Vector2 m_horizontalSizePinch;
     [SerializeField] private LayerMask m_groundMask;
     [SerializeField] private float m_overlapCheckBuffer;
-    [SerializeField] private float m_colliderResetBuffer;
+    [SerializeField] private float m_verticalColliderResetBuffer;
+    [SerializeField] private float m_horizontalColliderResetBuffer;
     private bool m_isJumpActive;
     private bool m_isVerticalPinch = false;
     private Coroutine m_COverlapCheck;
@@ -30,6 +31,7 @@ public class ColliderPinch : MonoBehaviour
             // collider = size 1 (maybe veritcal)
         }
 
+
         //checks the player is rising in a jump while moving horizontally to activate horizontal collider pinch
         if (jumpState == 0 && (velocityX > 0.5f ^ velocityX < -0.5f))
         {
@@ -47,12 +49,27 @@ public class ColliderPinch : MonoBehaviour
             m_COverlapCheck = StartCoroutine(C_OverlapCheck());
             // collider = size 1 (maybe veritcal)
         }
+
+
         // vertical collider pinch reset and horizontal pinch reset when landing on a full platform to stop toes clipping in the floor
         if (jumpState == 2 && (m_isVerticalPinch || Physics2D.Raycast(transform.position, Vector2.down, 1.5f, m_groundMask)))
         {
             m_isJumpActive = false;
             m_playerCol.size = m_colliderSizeNormal;
+            return;
         }
+
+        if (jumpState == 2 && (velocityX > 0.5f ^ velocityX < -0.5f))
+        {
+            m_isVerticalPinch = false;
+
+            if (m_isJumpActive) { return; }
+            m_isJumpActive = true;
+            m_playerCol.size = m_horizontalSizePinch;
+            m_COverlapCheck = StartCoroutine(C_OverlapCheck());
+        }
+
+
         // horizontal collider pinch reset on correcting toe clipping
         if (jumpState == 3)
         {
@@ -60,13 +77,6 @@ public class ColliderPinch : MonoBehaviour
             m_playerCol.size = m_colliderSizeNormal;
         }
 
-        //if (jumpState == 4)
-        //{
-        //    if (m_isJumpActive) { return; }
-        //    m_isJumpActive = true;
-        //    m_playerCol.size = m_horizontalSizePinch;
-        //    m_COverlapCheck = StartCoroutine(C_OverlapCheck());
-        //}
     }
 
 
@@ -87,12 +97,13 @@ public class ColliderPinch : MonoBehaviour
                 if (m_isVerticalPinch)
                 {
                     //Debug.Log("i am overlapping");
-                    yield return new WaitForSeconds(m_colliderResetBuffer);
+                    yield return new WaitForSeconds(m_verticalColliderResetBuffer);
                     m_playerCol.size = m_colliderSizeNormal;
                 }
                 //corrects player position on horizontal collider pinch overlap
                 else
                 {
+                    yield return new WaitForSeconds(m_horizontalColliderResetBuffer);
                     m_playerCol.size = m_colliderSizeNormal;
                 }
             }
