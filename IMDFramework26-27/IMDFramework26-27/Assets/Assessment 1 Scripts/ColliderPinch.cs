@@ -20,55 +20,66 @@ public class ColliderPinch : MonoBehaviour
 
     public void Pinch(int jumpState, float velocityX)
     {
-        //checks the player is rising in a jump while not moving much horizontally to activate vertical collider pinch ( bumped head correction)
-        if (jumpState == 0 && (velocityX < 0.5f && velocityX > -0.5f))
+        if (jumpState == 0)
         {
-            m_isVerticalPinch = true;
-            if (m_isJumpActive) { return; }
-            m_isJumpActive = true;
-            m_playerCol.size = m_verticalSizePinch;
-            m_COverlapCheck = StartCoroutine(C_OverlapCheck());
-            // collider = size 1 (maybe veritcal)
-        }
-
-
-        //checks the player is rising in a jump while moving horizontally to activate horizontal collider pinch
-        if (jumpState == 0 && (velocityX > 0.5f ^ velocityX < -0.5f))
-        {
-            m_isVerticalPinch = false;
-
-            // checks there isn't a ceiling immediately above the player when starting horizontal collider pinch to prevent head clipping in the ceiling and pushing player down
-            if (Physics2D.Raycast(transform.position, Vector2.up, 1.5f, m_groundMask))
+            //checks the player is rising in a jump while not moving much horizontally to activate vertical collider pinch ( bumped head correction)
+            if (velocityX < 0.5f && velocityX > -0.5f)
             {
-                m_playerCol.size = m_colliderSizeNormal;
+                if (Physics2D.Raycast(transform.position, Vector2.left, 1f, m_groundMask) || Physics2D.Raycast(transform.position, Vector2.right, 1f, m_groundMask))
+                {
+                    m_playerCol.size = m_colliderSizeNormal;
+                    return;
+                }
+
+                m_isVerticalPinch = true;
+                if (m_isJumpActive) { return; }
+                m_isJumpActive = true;
+                m_playerCol.size = m_verticalSizePinch;
+                m_COverlapCheck = StartCoroutine(C_OverlapCheck());
+                // collider = size 1 (maybe veritcal)
             }
 
-            if (m_isJumpActive) { return; }
-            m_isJumpActive = true;
-            m_playerCol.size = m_horizontalSizePinch;
-            m_COverlapCheck = StartCoroutine(C_OverlapCheck());
-            // collider = size 1 (maybe veritcal)
+
+            //checks the player is rising in a jump while moving horizontally to activate horizontal collider pinch
+            if (velocityX > 0.5f ^ velocityX < -0.5f)
+            {
+                m_isVerticalPinch = false;
+
+                // checks there isn't a ceiling immediately above the player when starting horizontal collider pinch to prevent head clipping in the ceiling and pushing player down
+                if (Physics2D.Raycast(transform.position, Vector2.up, 1.5f, m_groundMask))
+                {
+                    m_playerCol.size = m_colliderSizeNormal;
+                }
+
+                if (m_isJumpActive) { return; }
+                m_isJumpActive = true;
+                m_playerCol.size = m_horizontalSizePinch;
+                m_COverlapCheck = StartCoroutine(C_OverlapCheck());
+                // collider = size 1 (maybe veritcal)
+            }
         }
 
-
-        // vertical collider pinch reset and horizontal pinch reset when landing on a full platform to stop toes clipping in the floor
-        if (jumpState == 2 && (m_isVerticalPinch || Physics2D.Raycast(transform.position, Vector2.down, 1.5f, m_groundMask)))
+        if (jumpState == 2)
         {
-            m_isJumpActive = false;
-            m_playerCol.size = m_colliderSizeNormal;
-            return;
+            // vertical collider pinch reset and horizontal pinch reset when landing on a full platform to stop toes clipping in the floor
+            if (m_isVerticalPinch || Physics2D.Raycast(transform.position, Vector2.down, 1.5f, m_groundMask))
+            {
+                m_isJumpActive = false;
+                m_playerCol.size = m_colliderSizeNormal;
+                return;
+            }
+
+            // horizontal collider pinch for when player falls naturally rather than jump
+            if (velocityX > 0.5f ^ velocityX < -0.5f)
+            {
+                m_isVerticalPinch = false;
+
+                if (m_isJumpActive) { return; }
+                m_isJumpActive = true;
+                m_playerCol.size = m_horizontalSizePinch;
+                m_COverlapCheck = StartCoroutine(C_OverlapCheck());
+            }
         }
-
-        if (jumpState == 2 && (velocityX > 0.5f ^ velocityX < -0.5f))
-        {
-            m_isVerticalPinch = false;
-
-            if (m_isJumpActive) { return; }
-            m_isJumpActive = true;
-            m_playerCol.size = m_horizontalSizePinch;
-            m_COverlapCheck = StartCoroutine(C_OverlapCheck());
-        }
-
 
         // horizontal collider pinch reset on correcting toe clipping
         if (jumpState == 3)

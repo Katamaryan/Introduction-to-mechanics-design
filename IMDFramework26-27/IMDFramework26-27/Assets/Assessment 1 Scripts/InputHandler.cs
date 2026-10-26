@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
 {
-    [SerializeField] private CharacterMovement m_CharacterMovement;
 
     #region Event definitions
 
@@ -42,11 +41,11 @@ public class InputHandler : MonoBehaviour
     private void Awake()
     {
         m_ActionMap = new PlayerControls();
-
     }
     
     private void Handle_MovePerformed(InputAction.CallbackContext context)
     {
+        //adding the question mark makes it so the code checks if the event is null be invoking and if is null then skips it
         onMovePerformed?.Invoke(context.ReadValue<float>());
     }
 
@@ -57,7 +56,6 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_JumpPerformed(InputAction.CallbackContext context)
     {
-        //adding the question mark makes it so the code checks if the event is null be invoking and if is null then skips it
         onJumpPerformed?.Invoke();
     }
 

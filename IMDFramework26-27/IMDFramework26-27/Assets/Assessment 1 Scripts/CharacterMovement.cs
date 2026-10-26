@@ -10,7 +10,7 @@ public class CharacterMovement : MonoBehaviour
 	private Rigidbody2D m_RB;
 
     public event Action<int, float> onJumpStateChange;
-
+    //[Header("Health Parameters")]
     [SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
     private float m_InMove;
@@ -22,11 +22,27 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float m_apexGravScale;
     [SerializeField] private float m_variableJumpStrength;
     [SerializeField] private float m_fallSpeedClamp;
+    private float m_jumpBufferWait;
+    public float m_coyoteTimer;
     private Coroutine m_CMove;
-    private bool m_isMoveActive;
     private Coroutine m_CJump;
-    private bool m_isJumpActive;
+    private bool m_isMoveActive;
+    private bool m_inAir;
+    private bool m_hasJumped;
 
+    [SerializeField] private AudioSource m_jumpSound;
+
+
+    enum JumpState
+    {
+        //0 = rising, 1 = apexing, 2 = falling, 3 = grounded
+        rising,
+        apexing,
+        falling,
+        grounded
+
+    }
+    JumpState jumpState = JumpState.grounded;
 
     private void Awake()
     {
@@ -37,21 +53,28 @@ public class CharacterMovement : MonoBehaviour
     {
         m_IsGrounded = isGrounded;
         m_IsOnPlatform = isOnPlatform;
+        
         if (isOnPlatform && !isGrounded)
         {
             m_IsGrounded = isOnPlatform;
         }
-        if(m_IsGrounded)
-        {
-            m_coyoteTimer = Time.time;
-            return;
-        }
+        
         if (!m_IsGrounded)
         {
-            if (m_isJumpActive) { return; }
-            m_isJumpActive = true;
+            m_coyoteTimer = Time.time + m_coyoteTimeLength;
+            if (m_inAir) { return; }
+            m_inAir = true;
             m_CJump = StartCoroutine(C_JumpUpdate());
         }
+    }
+
+    private void JumpForce()
+    {
+        //Debug.Log("Attempting jump");
+        m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
+        m_jumpBufferWait = 0f;
+        m_hasJumped = true;
+        m_jumpSound.Play();
     }
 
     #region InputFunctions
@@ -92,16 +115,14 @@ public class CharacterMovement : MonoBehaviour
     }
 
 
-    private float m_jumpBufferWait;
-    public float m_coyoteTimer;
 
 
     public void JumpPerformed()
     {
         m_InJump = true;
         
-        if (m_isJumpActive) { return; }
-        m_isJumpActive = true;
+        if (m_inAir) { return; }
+        m_inAir = true;
         m_CJump = StartCoroutine(C_JumpUpdate());
     }
 
@@ -133,8 +154,7 @@ public class CharacterMovement : MonoBehaviour
 
     IEnumerator C_JumpUpdate()
     {
-
-        while (m_isJumpActive)
+        while (m_inAir)
         {
             yield return new WaitForFixedUpdate();
             switch (jumpState)
@@ -151,12 +171,11 @@ public class CharacterMovement : MonoBehaviour
                     }
 
 
-                    // allows player to jump when on the ground (also has a check to prevent a perfectly timed super jump, could be fun idea for different project, removed as i moved the jump buffer to falling state)
+                    // allows player to jump when on the ground (also has a check to prevent a perfectly timed super jump,
+                    // could be fun idea for different project, removed as i moved the jump buffer to falling state)
                     if (m_InJump)
                     {
-                        //Debug.Log("Attempting jump");
-                        m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-                        m_jumpBufferWait = 0f;
+                        JumpForce();
                         jumpState = JumpState.rising;
                     }
 
@@ -164,7 +183,8 @@ public class CharacterMovement : MonoBehaviour
                     //checks there is no input and kills the porgram
                     if(!m_InJump) 
                     {
-                        m_isJumpActive = false;
+                        m_inAir = false;
+                        m_hasJumped = false;
                     }
                     break;
 
@@ -181,8 +201,6 @@ public class CharacterMovement : MonoBehaviour
                         //prevents the player from holding jump to automatically jump upon hitting the ground
                         m_InJump = false;
                         jumpState = JumpState.apexing;
-
-                        
                         break;
                     }
                     
@@ -202,6 +220,8 @@ public class CharacterMovement : MonoBehaviour
 
                     //slows player while in apex until falling fast enough to be considerd falling
                     m_RB.gravityScale = m_apexGravScale;
+
+
                     if (m_RB.linearVelocityY < -0.2f)
                     {
                         m_RB.gravityScale = 1f;
@@ -219,24 +239,25 @@ public class CharacterMovement : MonoBehaviour
 
 
                     //Checks coyote time hasn't expired and if jump is input andallows player to jump if true
-                    if (m_InJump && m_coyoteTimer + m_coyoteTimeLength > Time.time)
+                    if (m_InJump && m_coyoteTimer > Time.time && !m_hasJumped)
                     {
-                        m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-                        m_jumpBufferWait = 0f;
+                        JumpForce();
                         jumpState = JumpState.rising;
                         break;
                     }
 
-                    //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer (prevents holding jump too early and still being able to jump 
+                    //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer
+                    //(prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
                     {
-                        m_jumpBufferWait = Time.time;
+                        m_jumpBufferWait = Time.time + m_jumpBufferLength;
                         //Debug.Log(m_jumpBufferWait);
                     }
                     
                     
-                    // checks if the jump is held too early and resets it and the jump buffer time stamp also allows for player to reset jump buffer if accidentally pressed too early and let go
-                    if ((m_InJump && (m_jumpBufferWait + m_jumpBufferLength < Time.time)) || !m_InJump)
+                    // checks if the jump is held too early and resets it and the jump buffer time stamp also allows for player
+                    // to reset jump buffer if accidentally pressed too early and let go
+                    if ((m_InJump && (m_jumpBufferWait < Time.time)) || !m_InJump)
                     { 
                         m_InJump = false;
                         m_jumpBufferWait = 0f;
@@ -246,11 +267,9 @@ public class CharacterMovement : MonoBehaviour
                     if (m_IsGrounded)
                     {
                         //allows jump when ground is hit during jump buffer timing 
-                        if (m_jumpBufferWait + m_jumpBufferLength > Time.time)
+                        if (m_jumpBufferWait > Time.time)
                         {
-                            //Debug.Log("Attempting jump");
-                            m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
-                            m_jumpBufferWait = 0f;
+                            JumpForce();
                             jumpState = JumpState.rising;
                             break;
                         }
@@ -270,15 +289,5 @@ public class CharacterMovement : MonoBehaviour
 
     
 
-    enum JumpState
-    {
-        //0 = rising, 1 = apexing, 2 = falling, 3 = grounded
-        rising,
-        apexing,
-        falling,
-        grounded
-    
-    }
-    JumpState jumpState = JumpState.grounded;
     
 }
