@@ -10,13 +10,21 @@ public class CharacterMovement : MonoBehaviour
 	private Rigidbody2D m_RB;
 
     public event Action<int, float> onJumpStateChange;
-    //[Header("Health Parameters")]
+
+    [Header("Movement Parameters")]
     [SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
     private float m_InMove;
+    private bool m_isMoveActive;
     public bool m_IsGrounded;
     public bool m_IsOnPlatform;
     private bool m_InJump;
+    private bool m_hasJumped;
+    private bool m_inAir;
+    private Coroutine m_CMove;
+    private Coroutine m_CJump;
+
+    [Header("Forgiveness Parameters")]
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
     [SerializeField] private float m_apexGravScale;
@@ -24,11 +32,6 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float m_fallSpeedClamp;
     private float m_jumpBufferWait;
     public float m_coyoteTimer;
-    private Coroutine m_CMove;
-    private Coroutine m_CJump;
-    private bool m_isMoveActive;
-    private bool m_inAir;
-    private bool m_hasJumped;
 
     [SerializeField] private AudioSource m_jumpSound;
 
