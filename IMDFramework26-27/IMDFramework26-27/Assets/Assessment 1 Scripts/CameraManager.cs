@@ -16,7 +16,6 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private Vector3 m_tempVector;
     [SerializeField] private float m_camHeight;
     [SerializeField] private float m_magnitude;
-    [SerializeField] private bool m_bottomReached = false;
 
     //x = bottom, y = midpoint, z = top
     Vector3 border1;
