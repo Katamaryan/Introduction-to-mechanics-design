@@ -230,6 +230,12 @@ public class CharacterMovement : MonoBehaviour
                         m_RB.gravityScale = 1f;
                         jumpState = JumpState.falling;
                     }
+
+                    if (m_IsGrounded)
+                    {
+                        m_RB.gravityScale = 1f;
+                        jumpState = JumpState.grounded;
+                    }
                     break;
 
 
@@ -279,13 +285,13 @@ public class CharacterMovement : MonoBehaviour
 
                         jumpState = JumpState.grounded;
                     }
-                    Debug.Log(m_RB.linearVelocityY);
+                    //Debug.Log(m_RB.linearVelocityY);
                     break;
 
 
             }
             //Debug.Log("the jump coroutine is alive");
-            Debug.Log(jumpState);
+            //Debug.Log(jumpState);
         }
     }
     #endregion
