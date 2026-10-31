@@ -25,6 +25,8 @@ public class InputHandler : MonoBehaviour
         m_ActionMap.Default.MoveHoriz.canceled += Handle_MoveCancelled;
         m_ActionMap.Default.Jump.started += Handle_JumpPerformed;
         m_ActionMap.Default.Jump.canceled += Handle_JumpCanceled;
+        m_ActionMap.Default.Interact.performed += Handle_InteractionPerformed;
+        m_ActionMap.Default.Drop.performed += Handle_DropPerformed;
     }
 
     private void OnDisable()
@@ -35,8 +37,12 @@ public class InputHandler : MonoBehaviour
         m_ActionMap.Default.MoveHoriz.canceled -= Handle_MoveCancelled;
         m_ActionMap.Default.Jump.started -= Handle_JumpPerformed;
         m_ActionMap.Default.Jump.canceled -= Handle_JumpCanceled;
+        m_ActionMap.Default.Interact.performed -= Handle_InteractionPerformed;
+        m_ActionMap.Default.Drop.performed -= Handle_DropPerformed;
     }
     #endregion
+
+    [SerializeField] private LayerMask m_InteractLayer;
 
     private void Awake()
     {
@@ -64,7 +70,17 @@ public class InputHandler : MonoBehaviour
         onJumpCanceled?.Invoke();
     }
 
-    private void Handle_DropPerformed()
+    private void Handle_InteractionPerformed(InputAction.CallbackContext context)
+    {
+        Collider2D col = Physics2D.OverlapCircle(transform.position, 1, m_InteractLayer);
+
+        if (col != null && col.transform.TryGetComponent<IInteractable>(out var interactable))
+        {
+            interactable.Interact();
+        }
+    }
+
+    private void Handle_DropPerformed(InputAction.CallbackContext context)
     {
         onDropPerformed?.Invoke();
     }

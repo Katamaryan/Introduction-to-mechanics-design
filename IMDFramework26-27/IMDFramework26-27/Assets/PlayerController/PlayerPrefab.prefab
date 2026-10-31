@@ -93,7 +93,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 870ae63daa2f6fc4a931abae862b8791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputHandler
-  m_CharacterMovement: {fileID: 929667974029550097}
+  m_InteractLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &929667974029550097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,8 +117,8 @@ MonoBehaviour:
   m_apexGravScale: 0.2
   m_variableJumpStrength: 1
   m_fallSpeedClamp: -10
-  m_jumpSound: {fileID: 2917283366434027786}
   m_coyoteTimer: 0
+  m_jumpSound: {fileID: 2917283366434027786}
 --- !u!114 &4464383447647639941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,7 +645,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e44d7d28609d34488b95278301d6a6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  m_RaycastPosition: {fileID: 0}
   m_GroundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -651,5 +652,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   m_isGrounded: 0
+  m_lastGroundedCheck: 0
   m_isOnPlatform: 0
+  m_lastOnPlatformCheck: 0
   m_boxCastSize: {x: 0.8, y: 0.1}
