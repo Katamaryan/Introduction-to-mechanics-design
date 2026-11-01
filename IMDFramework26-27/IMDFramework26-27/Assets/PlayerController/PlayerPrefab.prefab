@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4464383447647639941}
   - component: {fileID: 8042820046549532902}
   - component: {fileID: 2917283366434027786}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,6 +96,9 @@ MonoBehaviour:
   m_InteractLayer:
     serializedVersion: 2
     m_Bits: 128
+  m_platformLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &929667974029550097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,7 +354,7 @@ GameObject:
   - component: {fileID: 4855070989235704345}
   - component: {fileID: 5404571805249445837}
   - component: {fileID: 8632643063295621059}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

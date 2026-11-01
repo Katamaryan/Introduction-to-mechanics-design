@@ -11,7 +11,7 @@ public class InputHandler : MonoBehaviour
     public event Action<float> onMoveCanceled;
     public event Action onJumpPerformed;
     public event Action onJumpCanceled;
-    public event Action onDropPerformed;
+    //public event Action onDropPerformed;
 
     #endregion
     private PlayerControls m_ActionMap;
@@ -43,10 +43,14 @@ public class InputHandler : MonoBehaviour
     #endregion
 
     [SerializeField] private LayerMask m_InteractLayer;
+    [SerializeField] private LayerMask m_platformLayer;
+    Transform m_groundSensor;
 
     private void Awake()
     {
         m_ActionMap = new PlayerControls();
+        
+        m_groundSensor = transform.GetChild(0).GetComponent<Transform>();
     }
     
     private void Handle_MovePerformed(InputAction.CallbackContext context)
@@ -82,6 +86,11 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_DropPerformed(InputAction.CallbackContext context)
     {
-        onDropPerformed?.Invoke();
+        Collider2D col = Physics2D.OverlapCircle(m_groundSensor.position, 1, m_platformLayer);
+
+        if (col != null && col.transform.TryGetComponent<IDroppable>(out var interactable))
+        {
+            interactable.Drop();
+        }
     }
 }
