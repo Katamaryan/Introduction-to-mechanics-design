@@ -5106,6 +5106,14 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7411698930526294251, guid: b571be19a3e1a6d44b8593be73be7056, type: 3}
+      propertyPath: m_botBorderDist
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7411698930526294251, guid: b571be19a3e1a6d44b8593be73be7056, type: 3}
+      propertyPath: m_topBorderDist
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7411698930526294251, guid: b571be19a3e1a6d44b8593be73be7056, type: 3}
       propertyPath: m_movingBorder.x
       value: 0.5
       objectReference: {fileID: 0}
