@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,7 +12,7 @@ public class InputHandler : MonoBehaviour
     public event Action<float> onMoveCanceled;
     public event Action onJumpPerformed;
     public event Action onJumpCanceled;
-    public event Action onDropPerformed;
+   // public event Action onDropPerformed;
 
     #endregion
     private PlayerControls m_ActionMap;
@@ -43,6 +44,7 @@ public class InputHandler : MonoBehaviour
     #endregion
 
     [SerializeField] private LayerMask m_InteractLayer;
+    [SerializeField] private LayerMask m_PlatformLayer;
 
     private void Awake()
     {
@@ -82,6 +84,25 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_DropPerformed(InputAction.CallbackContext context)
     {
-        onDropPerformed?.Invoke();
+        //onDropPerformed?.Invoke();
+
+        Collider2D col = Physics2D.OverlapCircle(transform.GetChild(0).position, 1, m_PlatformLayer);
+
+        if (col != null)
+        {
+            BoxCollider2D platCol = col.GetComponent<BoxCollider2D>();
+            BoxCollider2D playerCol = transform.GetChild(2).GetComponent<BoxCollider2D>();
+            StartCoroutine(DropPlatform(platCol, playerCol));
+        }
+    }
+
+    IEnumerator DropPlatform(BoxCollider2D platCol, BoxCollider2D playerCol)
+    {
+        //Debug.Log("goes through");
+        Physics2D.IgnoreCollision(playerCol, platCol, true);
+        //Debug.LogFormat("ignoring collision between {0}. {1} is bool: {2}", playerCol.gameObject.name, platCol.gameObject.name, Physics2D.GetIgnoreCollision(playerCol, platCol));
+        yield return new WaitForSeconds(1f);
+        Physics2D.IgnoreCollision(playerCol, platCol, false);
+
     }
 }

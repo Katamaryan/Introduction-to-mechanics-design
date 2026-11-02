@@ -7,6 +7,7 @@ public class CameraManager : MonoBehaviour
     public Transform m_target;
     [SerializeField] private Vector3 m_tempVector;
     [SerializeField] private float m_magnitude;
+    [SerializeField] private float m_OffsetX;
 
     //x = bottom, y = midpoint, z = top
    
@@ -15,25 +16,26 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float m_topBorderDist;
     [SerializeField] private float m_botBorderDist;
 
+
     private void Start()
     {
         
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         m_magnitude = Vector3.Distance(transform.position, m_target.position);
        
 
-        m_tempVector = m_target.position;
+        m_tempVector = new Vector3(m_target.position.x + m_OffsetX, m_target.position.y, m_target.position.z);
+        MovingVerticalBorder();
         m_tempVector.y = m_movingBorder.y;
-        MovingBorder();
 
 
-        transform.position = Vector3.Lerp(transform.position, m_tempVector, m_magnitude);
+        transform.position = Vector3.Lerp(transform.position, m_tempVector, m_magnitude * Time.deltaTime);
     }
 
-    private void MovingBorder()
+    private void MovingVerticalBorder()
     {
         if (m_target.position.y > m_movingBorder.z)
         {
@@ -48,7 +50,7 @@ public class CameraManager : MonoBehaviour
 
             m_movingBorder.y = m_movingBorder.y - distance;
         }
-        m_tempVector.y = Mathf.Clamp(m_tempVector.y, -2, 10);
+        m_movingBorder.y = Mathf.Clamp(m_movingBorder.y, -2, 10);
         m_movingBorder.x = m_movingBorder.y - m_botBorderDist;
         m_movingBorder.z = m_movingBorder.y + m_topBorderDist;
     }
