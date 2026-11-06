@@ -1,1 +1,48 @@
 VisualElement {}
+
+#container 
+{
+	align-content: center;
+	background-color: dimgrey;
+	width: 100%;
+	height: 100%;
+}
+
+.button
+{
+	transition-duration: 0.2s;
+	align-self: center
+	width: 50%;
+	background-color: aliceblue;
+	border-top-left-radius:10%;
+	border-top-right-radius:10%;
+	border-bottom-left-radius:10%;
+	border-bottom-right-radius:10%;
+	transition-timing-function: ease-in;
+}
+
+.button:hover
+{
+	translate: 0 -5px;
+	transition-duration: 0.2s;
+	background-color: aqua;
+	scale: 1.1, 1.1;
+	transition-timing-function: ease-in;
+}
+
+.scrollview
+{
+	align-self: center;
+	align-content: center;
+	background-color: wheat;
+	max-height: 90%;
+	width: 50%;
+}
+
+.label
+{
+	align-self: center;
+	border-color: chocolate;
+	border-width: 2px;
+	width: 90%;
+}
