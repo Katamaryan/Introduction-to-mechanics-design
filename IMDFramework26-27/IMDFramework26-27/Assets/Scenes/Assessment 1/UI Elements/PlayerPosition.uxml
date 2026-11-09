@@ -1,0 +1,3 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scenes/Assessment%201/UI%20Elements/PlayerPosition.uss?fileID=7433441132597879392&amp;guid=9c2c4b989eee66645890f37d7992de1f&amp;type=3#PlayerPosition"/>
+</ui:UXML>

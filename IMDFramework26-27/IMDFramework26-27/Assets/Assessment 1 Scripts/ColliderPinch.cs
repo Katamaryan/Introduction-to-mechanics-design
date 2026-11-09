@@ -95,11 +95,6 @@ public class ColliderPinch : MonoBehaviour
     {
         while (m_isJumpActive)
         {
-            //attempt to prevent the player from clipping into wall if jumping into a regular wall and not a head bump corner
-            //if (Physics2D.Raycast(transform.position, Vector2.left, .5f, m_groundMask) || Physics2D.Raycast(transform.position, Vector2.right, .5f, m_groundMask))
-            //{
-            //    m_playerCol.size = m_colliderSizeNormal;
-            //}
 
             yield return new WaitForSeconds(m_overlapCheckBuffer);
             if (Physics2D.OverlapCapsule(transform.position, m_colliderSizeNormal, CapsuleDirection2D.Vertical, 0f, m_groundMask))

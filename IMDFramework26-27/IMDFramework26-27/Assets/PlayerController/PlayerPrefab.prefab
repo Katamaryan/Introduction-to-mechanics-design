@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1811135825527961469}
   - component: {fileID: 929667974029550097}
   - component: {fileID: 4464383447647639941}
+  - component: {fileID: 3979606712185622575}
   - component: {fileID: 8042820046549532902}
   - component: {fileID: 2917283366434027786}
   m_Layer: 0
@@ -65,7 +66,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -117,10 +118,10 @@ MonoBehaviour:
   m_IsOnPlatform: 0
   m_jumpBufferLength: 0.2
   m_coyoteTimeLength: 0.2
-  m_apexGravScale: 0.2
-  m_variableJumpStrength: 1
+  m_apexGravScale: 0.17
+  m_fallingGravScale: 1.6
+  m_variableJumpStrength: 0.5
   m_fallSpeedClamp: -10
-  m_coyoteTimer: 0
   m_jumpSound: {fileID: 2917283366434027786}
 --- !u!114 &4464383447647639941
 MonoBehaviour:
@@ -135,6 +136,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   m_maxHealth: 3
+--- !u!114 &3979606712185622575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667636342438995758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 678688d6c336a5245b480058dcb362af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TransformWrapper
 --- !u!96 &8042820046549532902
 TrailRenderer:
   serializedVersion: 4

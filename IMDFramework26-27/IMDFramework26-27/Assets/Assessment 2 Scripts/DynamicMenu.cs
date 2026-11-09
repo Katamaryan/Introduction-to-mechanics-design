@@ -35,12 +35,12 @@ public class DynamicMenu : MonoBehaviour
             m_uiRoot.Add(list);
             m_scrollArea = list;
 
-            Label label = new Label();
-            label.name = "lb_randomnumberlabel";
-            label.text = Random.Range(Int32.MinValue, Int32.MaxValue).ToString();
-            label.AddToClassList("label");
-            m_scrollArea.Add(label);
         }
+        Label label = new Label();
+        label.name = "lb_randomnumberlabel";
+        label.text = Random.Range(Int32.MinValue, Int32.MaxValue).ToString();
+        label.AddToClassList("label");
+        m_scrollArea.Add(label);
     }
 
     

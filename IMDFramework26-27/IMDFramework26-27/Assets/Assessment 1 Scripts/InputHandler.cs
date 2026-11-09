@@ -84,7 +84,6 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_DropPerformed(InputAction.CallbackContext context)
     {
-        //onDropPerformed?.Invoke();
 
         Collider2D col = Physics2D.OverlapCircle(transform.GetChild(0).position, 1, m_PlatformLayer);
 
@@ -98,9 +97,7 @@ public class InputHandler : MonoBehaviour
 
     IEnumerator DropPlatform(BoxCollider2D platCol, BoxCollider2D playerCol)
     {
-        //Debug.Log("goes through");
         Physics2D.IgnoreCollision(playerCol, platCol, true);
-        //Debug.LogFormat("ignoring collision between {0}. {1} is bool: {2}", playerCol.gameObject.name, platCol.gameObject.name, Physics2D.GetIgnoreCollision(playerCol, platCol));
         yield return new WaitForSeconds(1f);
         Physics2D.IgnoreCollision(playerCol, platCol, false);
 

@@ -15,18 +15,12 @@ public class GroundCheck : MonoBehaviour
     public bool m_lastOnPlatformCheck = false;
     [SerializeField] private Vector2 m_boxCastSize;
 
-    private void Awake()
-    {
-        //m_CharacterMovement = gameObject.GetComponentInParent<CharacterMovement>();
-    }
 
     private void FixedUpdate()
     {
         m_isGrounded = Physics2D.OverlapBox(transform.position, m_boxCastSize, 0.0f, m_GroundLayer);
         m_isOnPlatform = Physics2D.OverlapBox(transform.position, m_boxCastSize, 0.0f, m_PlatformLayer);
         
-        //m_isGrounded = Physics2D.BoxCast(m_RaycastPosition.position, m_boxCastSize, 0f, Vector2.down, 0.1f, m_GroundLayer);
-        //m_isOnPlatform = Physics2D.BoxCast(m_RaycastPosition.position, m_boxCastSize, 0f, Vector2.down, 0.1f, m_PlatformLayer);
         if (m_isGrounded != m_lastGroundedCheck || m_isOnPlatform != m_lastOnPlatformCheck)
             onGrounded?.Invoke(m_isGrounded, m_isOnPlatform);
         m_lastGroundedCheck = m_isGrounded;

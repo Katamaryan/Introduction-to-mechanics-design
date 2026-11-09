@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -28,10 +25,11 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField]  private float m_jumpBufferLength;
     [SerializeField] private float m_coyoteTimeLength;
     [SerializeField] private float m_apexGravScale;
+    [SerializeField] private float m_fallingGravScale;
     [SerializeField] private float m_variableJumpStrength;
     [SerializeField] private float m_fallSpeedClamp;
     private float m_jumpBufferWait;
-    public float m_coyoteTimer;
+    private float m_coyoteTimer;
 
     [SerializeField] private AudioSource m_jumpSound;
 
@@ -117,9 +115,6 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-
-
-
     public void JumpPerformed()
     {
         m_InJump = true;
@@ -134,12 +129,6 @@ public class CharacterMovement : MonoBehaviour
         m_InJump = false;
     }
 
-    //not in use atm, will implement later for relaxed semi solids
-    public void DropPerformed()
-    {
-        //Physics2D.IgnoreCollision()
-    }
-
     #endregion
 
     #region Coroutines
@@ -151,7 +140,6 @@ public class CharacterMovement : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-            //Debug.Log("the move coroutine is alive");
         }
     }
 
@@ -164,6 +152,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 case JumpState.grounded:
 
+                    //tells other scripts what jump state the player is in
                     onJumpStateChange?.Invoke(3, m_RB.linearVelocityX);
 
                     //changes state if not on ground
@@ -194,7 +183,6 @@ public class CharacterMovement : MonoBehaviour
 
                 case JumpState.rising:
                     
-                    //tells other scripts what jump state the player is in
                     onJumpStateChange?.Invoke(0, m_RB.linearVelocityX);
                 
                     
@@ -211,7 +199,8 @@ public class CharacterMovement : MonoBehaviour
                     //checks if the jump has been ended early from letting go of jump button in style of metroid from gba and earlier (havent played dread yet)
                     if (!m_InJump)
                     {
-                        m_RB.linearVelocityY = m_variableJumpStrength;
+                        m_RB.linearVelocityY *= m_variableJumpStrength;
+                        m_RB.gravityScale = m_fallingGravScale;
                         jumpState = JumpState.falling;
                     }
                     break;
@@ -227,7 +216,7 @@ public class CharacterMovement : MonoBehaviour
 
                     if (m_RB.linearVelocityY < -0.2f)
                     {
-                        m_RB.gravityScale = 1f;
+                        m_RB.gravityScale = m_fallingGravScale;
                         jumpState = JumpState.falling;
                     }
 
@@ -255,19 +244,19 @@ public class CharacterMovement : MonoBehaviour
                         break;
                     }
 
+
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer
                     //(prevents holding jump too early and still being able to jump 
                     if (m_InJump && m_jumpBufferWait == 0f)
                     {
                         m_jumpBufferWait = Time.time + m_jumpBufferLength;
-                        //Debug.Log(m_jumpBufferWait);
                     }
                     
                     
                     // checks if the jump is held too early and resets it and the jump buffer time stamp also allows for player
                     // to reset jump buffer if accidentally pressed too early and let go
                     if ((m_InJump && (m_jumpBufferWait < Time.time)) || !m_InJump)
-                    { 
+                    {
                         m_InJump = false;
                         m_jumpBufferWait = 0f;
                     }
@@ -275,6 +264,8 @@ public class CharacterMovement : MonoBehaviour
 
                     if (m_IsGrounded)
                     {
+                        m_RB.gravityScale = 1;
+
                         //allows jump when ground is hit during jump buffer timing 
                         if (m_jumpBufferWait > Time.time)
                         {
@@ -285,13 +276,10 @@ public class CharacterMovement : MonoBehaviour
 
                         jumpState = JumpState.grounded;
                     }
-                    //Debug.Log(m_RB.linearVelocityY);
                     break;
 
 
             }
-            //Debug.Log("the jump coroutine is alive");
-            //Debug.Log(jumpState);
         }
     }
     #endregion
