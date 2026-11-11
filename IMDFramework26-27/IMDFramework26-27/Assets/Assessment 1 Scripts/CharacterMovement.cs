@@ -34,6 +34,8 @@ public class CharacterMovement : MonoBehaviour
     private float m_coyoteTimer;
 
 
+    [SerializeField] private ParticleSystem m_walkParticles;
+
     enum JumpState
     {
         //0 = rising, 1 = apexing, 2 = falling, 3 = grounded
@@ -83,8 +85,8 @@ public class CharacterMovement : MonoBehaviour
     public void MovePerformed(float direction)
     {
         m_InMove = direction;
-        
 
+        //m_walkParticles.velocityOverLifetime.x = -direction;
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
