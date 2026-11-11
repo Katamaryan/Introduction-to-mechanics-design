@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    // for player audio ID - 0 = Jump; 1 = land; 2 = walking
+
 	private Rigidbody2D m_RB;
 
     public event Action<int, float> onJumpStateChange;
@@ -30,8 +32,6 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float m_fallSpeedClamp;
     private float m_jumpBufferWait;
     private float m_coyoteTimer;
-
-    [SerializeField] private AudioSource m_jumpSound;
 
 
     enum JumpState
@@ -71,11 +71,11 @@ public class CharacterMovement : MonoBehaviour
 
     private void JumpForce()
     {
-        //Debug.Log("Attempting jump");
         m_RB.AddForce(Vector2.up * m_JumpStrength, ForceMode2D.Impulse);
         m_jumpBufferWait = 0f;
         m_hasJumped = true;
-        m_jumpSound.Play();
+        AudioManager.instance.StopSound();
+        AudioManager.instance.PlayPlayerSound(0);
     }
 
     #region InputFunctions
@@ -96,6 +96,8 @@ public class CharacterMovement : MonoBehaviour
             m_isMoveActive = true;
             m_CMove = StartCoroutine(C_MoveUpdate());
         }
+        if (m_IsGrounded)
+            AudioManager.instance.PlayPlayerSound(2);
     }
     public void SetInMove(float direction)
     {
@@ -113,6 +115,7 @@ public class CharacterMovement : MonoBehaviour
             m_CMove = StartCoroutine(C_MoveUpdate());
             
         }
+        AudioManager.instance.StopSound();
     }
 
     public void JumpPerformed()
@@ -140,6 +143,7 @@ public class CharacterMovement : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
+
         }
     }
 
@@ -274,6 +278,12 @@ public class CharacterMovement : MonoBehaviour
                             break;
                         }
 
+                        AudioManager.instance.StopSound();
+                        AudioManager.instance.PlayPlayerSound(1);
+
+                        if (m_isMoveActive)
+                            AudioManager.instance.PlayPlayerSound(2);
+        
                         jumpState = JumpState.grounded;
                     }
                     break;

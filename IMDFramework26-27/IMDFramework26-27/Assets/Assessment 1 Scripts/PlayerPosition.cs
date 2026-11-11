@@ -26,10 +26,21 @@ public class PlayerPosition : MonoBehaviour
         ylabel.text = "Y: ______";
         ylabel.AddToClassList("positionlabel");
         labelcontainer.Add(ylabel);
+        
+        Label xVollabel = new Label();
+        xVollabel.name = "xVollabel";
+        xVollabel.text = "X velocity: ______";
+        xVollabel.AddToClassList("positionlabel");
+        labelcontainer.Add(xVollabel);
+        
+        Label yVollabel = new Label();
+        yVollabel.name = "yVollabel";
+        yVollabel.text = "Y velocity: ______";
+        yVollabel.AddToClassList("positionlabel");
+        labelcontainer.Add(yVollabel);
 
 
-        TransformWrapper playerTransform = GameObject.Find("PlayerPrefab").GetComponent<TransformWrapper>();
-        Debug.Log(playerTransform);
+        TransformWrapper playerTransform = GameObject.Find("PlayerPrefab(Clone)").GetComponent<TransformWrapper>();
         DataBinding xBinding = new DataBinding
         {
             dataSource = playerTransform,
@@ -52,5 +63,26 @@ public class PlayerPosition : MonoBehaviour
         yBinding.sourceToUiConverters.AddConverter((ref float value) => $"Y: {value:F2}");
         ylabel.SetBinding("text", yBinding);
 
+        DataBinding xVolBinding = new DataBinding
+        {
+            dataSource = playerTransform,
+            dataSourcePath = new Unity.Properties.PropertyPath("XVol"),
+            bindingMode = BindingMode.ToTarget
+        };
+
+        xVolBinding.updateTrigger = BindingUpdateTrigger.OnSourceChanged;
+        xVolBinding.sourceToUiConverters.AddConverter((ref float value) => $"X velocity: \n{value:F2}");
+        xVollabel.SetBinding("text", xVolBinding);
+
+        DataBinding yVolBinding = new DataBinding
+        {
+            dataSource = playerTransform,
+            dataSourcePath = new Unity.Properties.PropertyPath("YVol"),
+            bindingMode = BindingMode.ToTarget
+        };
+
+        yVolBinding.updateTrigger = BindingUpdateTrigger.OnSourceChanged;
+        yVolBinding.sourceToUiConverters.AddConverter((ref float value) => $"X velocity: \n{value:F2}");
+        yVollabel.SetBinding("text", yVolBinding);
     }
 }
