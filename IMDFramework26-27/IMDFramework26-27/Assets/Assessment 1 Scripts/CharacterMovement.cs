@@ -35,6 +35,7 @@ public class CharacterMovement : MonoBehaviour
 
 
     [SerializeField] private ParticleSystem m_walkParticles;
+    [SerializeField] ParticleSystem.VelocityOverLifetimeModule m_velocityOverLifetimeModule;
 
     enum JumpState
     {
@@ -99,7 +100,10 @@ public class CharacterMovement : MonoBehaviour
             m_CMove = StartCoroutine(C_MoveUpdate());
         }
         if (m_IsGrounded)
+        {
             AudioManager.instance.PlayPlayerSound(2);
+            m_walkParticles.Play();
+        }
     }
     public void SetInMove(float direction)
     {
@@ -118,6 +122,7 @@ public class CharacterMovement : MonoBehaviour
             
         }
         AudioManager.instance.StopSound();
+        m_walkParticles.Stop();
     }
 
     public void JumpPerformed()
