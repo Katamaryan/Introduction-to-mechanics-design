@@ -82,7 +82,7 @@ public class PlayerPosition : MonoBehaviour
         };
 
         yVolBinding.updateTrigger = BindingUpdateTrigger.OnSourceChanged;
-        yVolBinding.sourceToUiConverters.AddConverter((ref float value) => $"X velocity: \n{value:F2}");
+        yVolBinding.sourceToUiConverters.AddConverter((ref float value) => $"Y velocity: \n{value:F2}");
         yVollabel.SetBinding("text", yVolBinding);
     }
 }

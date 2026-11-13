@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour
     private bool m_InJump;
     private bool m_hasJumped;
     private bool m_inAir;
+    private float m_fallVelocity;
     private Coroutine m_CMove;
     private Coroutine m_CJump;
 
@@ -65,16 +66,20 @@ public class CharacterMovement : MonoBehaviour
 
         if (!m_IsGrounded)
         {
+            m_fallVelocity = 0f;
             m_coyoteTimer = Time.time + m_coyoteTimeLength;
             if (m_inAir) { return; }
             m_inAir = true;
             m_CJump = StartCoroutine(C_JumpUpdate());
+
         }
 
         if (m_IsGrounded)
         {
-            ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
-            
+            if (m_fallVelocity > -10)
+                ParticleManager.instance.PlayParticle(2, transform.position + Vector3.up / 4, Vector3.zero);
+            else
+                ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
         }
     }
 
@@ -98,7 +103,7 @@ public class CharacterMovement : MonoBehaviour
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
-            ParticleManager.instance.DespawnParticle(1);
+            //ParticleManager.instance.DespawnParticle(1);
         }
 
         else
@@ -121,7 +126,7 @@ public class CharacterMovement : MonoBehaviour
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
-            ParticleManager.instance.DespawnParticle(1);
+            //ParticleManager.instance.DespawnParticle(1);
         }
         else
         {
@@ -160,10 +165,10 @@ public class CharacterMovement : MonoBehaviour
 
             Vector3 target = transform.position;
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-            if (m_IsGrounded)
-                ParticleManager.instance.SpawnParticle(1, target + Vector3.up / 2, new Vector3(0, (180 + -m_InMove * 90), 0));
-            if (!m_IsGrounded || m_InMove == 0)
-                ParticleManager.instance.DespawnParticle(1);
+            if (m_IsGrounded && m_InMove != 0)
+                ParticleManager.instance.PlayParticle(1, new Vector3(transform.position.x - m_InMove / 2, transform.position.y + .1f, transform.position.z), new Vector3(0, (180 + -m_InMove * 90), 0));
+            //if (!m_IsGrounded || m_InMove == 0) 
+                //ParticleManager.instance.DespawnParticle(1);
         }
     }
 
@@ -309,7 +314,12 @@ public class CharacterMovement : MonoBehaviour
 
                         onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, 0f);
                         jumpState = JumpState.grounded;
+                        break;
                     }
+
+                    if (m_RB.linearVelocityY < m_fallVelocity)
+                        m_fallVelocity = m_RB.linearVelocityY;
+                    
                     break;
 
 
