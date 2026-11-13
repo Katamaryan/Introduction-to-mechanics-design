@@ -34,6 +34,17 @@ public class ParticleManager : MonoBehaviour
         m_particleRef[particleID].transform.rotation = Quaternion.Euler(rotation);
 
     }
+    public void PlayParticle(int particleID, Vector3 position, Vector3 rotation)
+    {
+        //m_particlePool[particleID].GetObject(position, rotation);
+        m_particleRef[particleID].SetActive(true);
+        m_particleRef[particleID].GetComponent<ParticleSystem>().Play();
+        m_particleRef[particleID].transform.position = position;
+        m_particleRef[particleID].transform.rotation = Quaternion.Euler(rotation);
+
+    }
+
+
 
     public void DespawnParticle(int particleID)
     {

@@ -35,8 +35,6 @@ public class CharacterMovement : MonoBehaviour
     private float m_coyoteTimer;
 
 
-    [SerializeField] private ParticleSystem m_walkParticles;
-    [SerializeField] ParticleSystem.VelocityOverLifetimeModule m_velocityOverLifetimeModule;
 
     enum JumpState
     {
@@ -73,6 +71,11 @@ public class CharacterMovement : MonoBehaviour
             m_CJump = StartCoroutine(C_JumpUpdate());
         }
 
+        if (m_IsGrounded)
+        {
+            ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
+            
+        }
     }
 
     private void JumpForce()
@@ -95,6 +98,7 @@ public class CharacterMovement : MonoBehaviour
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
+            ParticleManager.instance.DespawnParticle(1);
         }
 
         else
@@ -106,7 +110,6 @@ public class CharacterMovement : MonoBehaviour
         if (m_IsGrounded)
         {
             AudioManager.instance.PlayPlayerSound(2);
-            m_walkParticles.Play();
         }
     }
     public void SetInMove(float direction)
@@ -118,6 +121,7 @@ public class CharacterMovement : MonoBehaviour
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
+            ParticleManager.instance.DespawnParticle(1);
         }
         else
         {
@@ -126,9 +130,7 @@ public class CharacterMovement : MonoBehaviour
             m_CMove = StartCoroutine(C_MoveUpdate());
             
         }
-        ParticleManager.instance.DespawnParticle(1);
         AudioManager.instance.StopSound();
-        m_walkParticles.Stop();
     }
 
     public void JumpPerformed()
@@ -156,9 +158,12 @@ public class CharacterMovement : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
-            ParticleManager.instance.SpawnParticle(1, transform.position, new Vector3(0,(180 + -m_InMove * 90), 0));
+            Vector3 target = transform.position;
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
-
+            if (m_IsGrounded)
+                ParticleManager.instance.SpawnParticle(1, target + Vector3.up / 2, new Vector3(0, (180 + -m_InMove * 90), 0));
+            if (!m_IsGrounded || m_InMove == 0)
+                ParticleManager.instance.DespawnParticle(1);
         }
     }
 
