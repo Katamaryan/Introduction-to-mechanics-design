@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour
     private InputHandler m_inputHandler;
     private ColliderPinch m_colliderPinch;
     private HealthComponent m_healthComponent;
-
+    private PlayerAnimation m_playerAnimation;
     #endregion
 
     void Awake()
@@ -18,6 +18,7 @@ public class PlayerManager : MonoBehaviour
         m_groundCheck = transform.GetChild(0).GetComponent<GroundCheck>();
         m_inputHandler = GetComponent<InputHandler>();
         m_healthComponent = GetComponent<HealthComponent>();
+        m_playerAnimation = transform.GetChild(1).GetComponent<PlayerAnimation>();
     }
 
     private void Start()
@@ -29,6 +30,7 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
         m_characterMovement.onJumpStateChange += m_colliderPinch.Pinch;
+        m_characterMovement.onAnimationParamChange += m_playerAnimation.AnimationParamChanged;
         m_groundCheck.onGrounded += m_characterMovement.OnGrounded;
     }
 
@@ -41,6 +43,7 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
         m_characterMovement.onJumpStateChange -= m_colliderPinch.Pinch;
+        m_characterMovement.onAnimationParamChange -= m_playerAnimation.AnimationParamChanged;
         m_groundCheck.onGrounded -= m_characterMovement.OnGrounded;
     }
 

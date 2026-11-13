@@ -9,6 +9,7 @@ public class CharacterMovement : MonoBehaviour
 	private Rigidbody2D m_RB;
 
     public event Action<int, float> onJumpStateChange;
+    public event Action<float, bool, bool, float> onAnimationParamChange;
 
     [Header("Movement Parameters")]
     [SerializeField] private float m_MoveSpeed;
@@ -62,7 +63,8 @@ public class CharacterMovement : MonoBehaviour
         {
             m_IsGrounded = isOnPlatform;
         }
-        
+        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+
         if (!m_IsGrounded)
         {
             m_coyoteTimer = Time.time + m_coyoteTimeLength;
@@ -70,6 +72,7 @@ public class CharacterMovement : MonoBehaviour
             m_inAir = true;
             m_CJump = StartCoroutine(C_JumpUpdate());
         }
+
     }
 
     private void JumpForce()
@@ -87,6 +90,7 @@ public class CharacterMovement : MonoBehaviour
     {
         m_InMove = direction;
 
+        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
         //m_walkParticles.velocityOverLifetime.x = -direction;
         if (m_InMove == 0)
         {
@@ -109,6 +113,7 @@ public class CharacterMovement : MonoBehaviour
     {
         m_InMove = direction;
 
+        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
         if (m_InMove == 0)
         {
@@ -121,6 +126,7 @@ public class CharacterMovement : MonoBehaviour
             m_CMove = StartCoroutine(C_MoveUpdate());
             
         }
+        ParticleManager.instance.DespawnParticle(1);
         AudioManager.instance.StopSound();
         m_walkParticles.Stop();
     }
@@ -131,6 +137,7 @@ public class CharacterMovement : MonoBehaviour
         
         if (m_inAir) { return; }
         m_inAir = true;
+        onAnimationParamChange?.Invoke(m_InMove, m_InJump, true, m_RB.linearVelocityY);
         m_CJump = StartCoroutine(C_JumpUpdate());
     }
 
@@ -149,6 +156,7 @@ public class CharacterMovement : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
+            ParticleManager.instance.SpawnParticle(1, transform.position, new Vector3(0,(180 + -m_InMove * 90), 0));
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
 
         }
@@ -255,6 +263,9 @@ public class CharacterMovement : MonoBehaviour
                         break;
                     }
 
+                    if (m_coyoteTimer > Time.time)
+                        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+
 
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer
                     //(prevents holding jump too early and still being able to jump 
@@ -290,7 +301,8 @@ public class CharacterMovement : MonoBehaviour
 
                         if (m_isMoveActive)
                             AudioManager.instance.PlayPlayerSound(2);
-        
+
+                        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, 0f);
                         jumpState = JumpState.grounded;
                     }
                     break;
