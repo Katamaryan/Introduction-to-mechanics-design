@@ -74,7 +74,7 @@ public class CharacterMovement : MonoBehaviour
 
         }
 
-        if (m_IsGrounded)
+        if (m_IsGrounded && m_fallVelocity < 0)
         {
             if (m_fallVelocity > -10)
                 ParticleManager.instance.PlayParticle(2, transform.position + Vector3.up / 4, Vector3.zero);
