@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
     private void Handle_OnPlayerDeath(MonoBehaviour causer)
     {
         Debug.Log($"bro is dead cus of {causer.gameObject.name}");
-
+        transform.position = m_groundCheck.m_safePosition;
     }
 
     public void init()
