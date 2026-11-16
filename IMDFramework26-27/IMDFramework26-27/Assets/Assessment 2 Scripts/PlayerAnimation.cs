@@ -22,4 +22,13 @@ public class PlayerAnimation : MonoBehaviour
             animator.SetBool("Falling", false);
     }
 
+    public void AnimationDamage(float direction, bool damageState)
+    {
+        animator.SetBool("Damaged", damageState);
+        if (direction == -1)
+            animator.SetFloat("LastDirection", -1);
+        else
+            animator.SetFloat("LastDirection", 1);
+    }
+
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -49,4 +50,27 @@ public class CameraManager : MonoBehaviour
         m_movingBorder.z = m_movingBorder.y + m_topBorderDist;
     }
 
+    private void StartCameraShake()
+    {
+        
+    }
+
+    public IEnumerator CameraShake(float duration, float magnitude)
+    {
+        Vector3 originalPos = Camera.main.transform.position;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = UnityEngine.Random.Range(-1, 1f) * magnitude;
+            float y = UnityEngine.Random.Range(-1, 1f) * magnitude;
+
+            Camera.main.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+        
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Camera.main.transform.localPosition = originalPos;
+    }
 }

@@ -15,6 +15,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float m_MoveSpeed;
 	[SerializeField] private float m_JumpStrength;
     private float m_InMove;
+    public  float m_lastMoveDirection;
     private bool m_isMoveActive;
     public bool m_IsGrounded;
     public bool m_IsOnPlatform;
@@ -98,12 +99,12 @@ public class CharacterMovement : MonoBehaviour
     {
         m_InMove = direction;
 
+        if (m_InMove != 0)
+            m_lastMoveDirection = m_InMove;
         onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
-        //m_walkParticles.velocityOverLifetime.x = -direction;
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
-            //ParticleManager.instance.DespawnParticle(1);
         }
 
         else
@@ -126,7 +127,6 @@ public class CharacterMovement : MonoBehaviour
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
-            //ParticleManager.instance.DespawnParticle(1);
         }
         else
         {

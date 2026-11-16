@@ -15,7 +15,8 @@ public class InputHandler : MonoBehaviour
    // public event Action onDropPerformed;
 
     #endregion
-    private PlayerControls m_ActionMap;
+    public PlayerControls m_ActionMap;
+    private Coroutine m_CDrop;
     
     #region Bindings
     private void OnEnable()
@@ -91,7 +92,7 @@ public class InputHandler : MonoBehaviour
         {
             BoxCollider2D platCol = col.GetComponent<BoxCollider2D>();
             BoxCollider2D playerCol = transform.GetChild(2).GetComponent<BoxCollider2D>();
-            StartCoroutine(DropPlatform(platCol, playerCol));
+            m_CDrop = StartCoroutine(DropPlatform(platCol, playerCol));
         }
     }
 

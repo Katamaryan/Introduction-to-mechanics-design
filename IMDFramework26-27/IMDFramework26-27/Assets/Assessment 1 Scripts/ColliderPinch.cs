@@ -20,6 +20,8 @@ public class ColliderPinch : MonoBehaviour
 
     public void Pinch(int jumpState, float velocityX)
     {
+        //0 = rising, 1 = apexing, 2 = falling, 3 = grounded
+
         if (jumpState == 0)
         {
             //checks the player is rising in a jump while not moving much horizontally to activate vertical collider pinch ( bumped head correction)
@@ -86,6 +88,7 @@ public class ColliderPinch : MonoBehaviour
         {
             m_isJumpActive = false;
             m_playerCol.size = m_colliderSizeNormal;
+            m_isVerticalPinch = false;
         }
 
     }

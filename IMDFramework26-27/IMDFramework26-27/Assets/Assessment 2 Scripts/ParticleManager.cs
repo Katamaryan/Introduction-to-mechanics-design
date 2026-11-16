@@ -3,9 +3,8 @@ using static UnityEngine.ParticleSystem;
 
 public class ParticleManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] m_particlePrefab = new GameObject[3];
-    private GameObject[] m_particleRef = new GameObject[3];
-    private ParticleObjectPool[] m_particlePool = new ParticleObjectPool[3];
+    [SerializeField] private GameObject[] m_particlePrefab = new GameObject[4];
+    private GameObject[] m_particleRef = new GameObject[4];
     public static ParticleManager instance { get; set; }
 
     [SerializeField] private int m_defaultSize;
@@ -22,13 +21,11 @@ public class ParticleManager : MonoBehaviour
         {
             m_particleRef[i] = Instantiate(m_particlePrefab[i]);
             m_particleRef[i].SetActive(false);
-            //  m_particlePool[i] = new ParticleObjectPool(m_particlePrefab[i], m_defaultSize, m_MaxSize);
         }
     }
 
     public void SpawnParticle(int particleID, Vector3 position, Vector3 rotation)
     {
-        //m_particlePool[particleID].GetObject(position, rotation);
         m_particleRef[particleID].SetActive(true);
         m_particleRef[particleID].transform.position = position;
         m_particleRef[particleID].transform.rotation = Quaternion.Euler(rotation);
@@ -36,7 +33,6 @@ public class ParticleManager : MonoBehaviour
     }
     public void PlayParticle(int particleID, Vector3 position, Vector3 rotation)
     {
-        //m_particlePool[particleID].GetObject(position, rotation);
         m_particleRef[particleID].SetActive(true);
         m_particleRef[particleID].GetComponent<ParticleSystem>().Play();
         m_particleRef[particleID].transform.position = position;
