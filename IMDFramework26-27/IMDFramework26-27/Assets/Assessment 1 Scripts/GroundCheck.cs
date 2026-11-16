@@ -7,12 +7,15 @@ public class GroundCheck : MonoBehaviour
     [SerializeField] private Transform m_playerTransform;
     [SerializeField] private LayerMask m_GroundLayer;
     [SerializeField] private LayerMask m_PlatformLayer;
+    [SerializeField] private LayerMask m_DangerLayer;
     public bool m_isGrounded = false;
     public bool m_lastGroundedCheck = false;
     public bool m_isOnPlatform = false;
     public bool m_lastOnPlatformCheck = false;
     public bool m_leftFloorCheck = false;
+    public bool m_leftDangerCheck = false;
     public bool m_rightFloorCheck = false;
+    public bool m_DangerCheck = false;
     private float m_lastSafeCheck;
     public Vector3 m_safePosition;
     [SerializeField] private Vector2 m_boxCastSize;
@@ -26,9 +29,11 @@ public class GroundCheck : MonoBehaviour
         m_rightFloorCheck = Physics2D.Raycast(new Vector3(transform.position.x + 1, transform.position.y + 1, transform.position.z), Vector3.down, 1.1f, m_GroundLayer);
         m_leftFloorCheck = Physics2D.Raycast(new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z), Vector3.down, 1.1f, m_GroundLayer);
         
-        if (m_rightFloorCheck && m_leftFloorCheck && m_isGrounded && m_lastSafeCheck < Time.time)
+        m_DangerCheck = Physics2D.OverlapBox(transform.position, m_boxCastSize, 0.0f, m_DangerLayer);
+        
+        if (m_rightFloorCheck && m_leftFloorCheck && m_isGrounded && m_lastSafeCheck < Time.time && !m_DangerCheck)
         {
-            m_lastSafeCheck = Time.time + 3;
+            m_lastSafeCheck = Time.time + 2;
             m_safePosition = m_playerTransform.position;
         }
 

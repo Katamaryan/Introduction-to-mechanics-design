@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 362303634522527720}
   - component: {fileID: 1668677317131327107}
   - component: {fileID: 2824256826942523817}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 2735504117953025901}
   - component: {fileID: 2601458319142341959}
   - component: {fileID: 8776443481558312636}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 4548160064539918527}
   - component: {fileID: 2731474127866101148}
   - component: {fileID: 2127956752889839250}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -391,7 +391,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1135702953541211829}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SpikeTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
