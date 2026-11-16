@@ -12,7 +12,7 @@ public class CameraManager : MonoBehaviour
 
     //x = bottom, y = midpoint, z = top
     [SerializeField] Vector3 m_movingBorder;
-    [SerializeField] private bool m_camLocked;
+    private bool m_camLocked;
     [SerializeField] private float m_topBorderDist;
     [SerializeField] private float m_botBorderDist;
 
@@ -26,8 +26,8 @@ public class CameraManager : MonoBehaviour
         MovingVerticalBorder();
         m_targetPosition.y = m_movingBorder.y;
 
-
-        transform.position = Vector3.Lerp(transform.position, m_targetPosition, m_magnitude * Time.deltaTime);
+        if (!m_camLocked)
+            transform.position = Vector3.Lerp(transform.position, m_targetPosition, m_magnitude * Time.deltaTime);
     }
 
     private void MovingVerticalBorder()
@@ -50,14 +50,45 @@ public class CameraManager : MonoBehaviour
         m_movingBorder.z = m_movingBorder.y + m_topBorderDist;
     }
 
-    private void StartCameraShake()
+    public void StartDamageCameraShake()
     {
-        
+        StartCoroutine(CDamageCameraShake(0.1f, 0.1f));
     }
 
-    public IEnumerator CameraShake(float duration, float magnitude)
+    public void StartLandingCameraShake(float yVelocity)
     {
-        Vector3 originalPos = Camera.main.transform.position;
+        m_camLocked = true;
+        StartCoroutine(CLandingCameraShake(0.1f * -yVelocity / 10, yVelocity));
+    }
+
+
+    private IEnumerator CLandingCameraShake(float duration, float magnitude)
+    {
+        Vector3 originalPos = Camera.main.transform.localPosition;
+        float elapsed = 0f;
+
+        float y = 0f;
+
+        while (elapsed < duration)
+        {
+            if (elapsed < duration / 2)
+                y += Mathf.Clamp(y + Time.deltaTime, 0, magnitude);
+            else
+                y += Mathf.Clamp(y - Time.deltaTime, 0, magnitude);
+
+            Camera.main.transform.localPosition = Vector3.Lerp(Camera.main.transform.localPosition, new Vector3(originalPos.x, originalPos.y + y, originalPos.z), Time.deltaTime);
+        
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        //Camera.main.transform.localPosition = originalPos;
+        m_camLocked = false;
+    }
+   
+    private IEnumerator CDamageCameraShake(float duration, float magnitude)
+    {
+        Vector3 originalPos = Camera.main.transform.localPosition;
         float elapsed = 0f;
 
         while (elapsed < duration)

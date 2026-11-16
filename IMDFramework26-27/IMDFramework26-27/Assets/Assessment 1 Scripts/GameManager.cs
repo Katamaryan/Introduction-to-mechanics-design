@@ -16,4 +16,14 @@ public class GameManager : MonoBehaviour
         m_cameraFollowerRef = m_playerRef.transform.GetChild(3);
         m_cameraRef.GetComponent<CameraManager>().m_target = m_cameraFollowerRef;
     }
+
+    void OnEnable()
+    {
+        m_playerRef.GetComponent<PlayerManager>().OnLand += m_cameraRef.GetComponent<CameraManager>().StartLandingCameraShake;
+    }
+
+    void OnDisable()
+    {
+        m_playerRef.GetComponent<PlayerManager>().OnLand -= m_cameraRef.GetComponent<CameraManager>().StartLandingCameraShake;
+    }
 }

@@ -8,8 +8,9 @@ public class CharacterMovement : MonoBehaviour
 
 	private Rigidbody2D m_RB;
 
-    public event Action<int, float> onJumpStateChange;
-    public event Action<float, bool, bool, float> onAnimationParamChange;
+    public event Action<int, float> OnJumpStateChange;
+    public event Action<float> OnLand;
+    public event Action<float, bool, bool, float> OnAnimationParamChange;
 
     [Header("Movement Parameters")]
     [SerializeField] private float m_MoveSpeed;
@@ -63,7 +64,7 @@ public class CharacterMovement : MonoBehaviour
         {
             m_IsGrounded = isOnPlatform;
         }
-        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
         if (!m_IsGrounded)
         {
@@ -80,7 +81,10 @@ public class CharacterMovement : MonoBehaviour
             if (m_fallVelocity > -12.5)
                 ParticleManager.instance.PlayParticle(2, transform.position + Vector3.up / 4, Vector3.zero);
             else
+            {
                 ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
+                OnLand?.Invoke(m_fallVelocity);
+            }
         }
     }
 
@@ -101,7 +105,7 @@ public class CharacterMovement : MonoBehaviour
 
         if (m_InMove != 0)
             m_lastMoveDirection = m_InMove;
-        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
@@ -122,7 +126,7 @@ public class CharacterMovement : MonoBehaviour
     {
         m_InMove = direction;
 
-        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
         if (m_InMove == 0)
         {
@@ -144,7 +148,7 @@ public class CharacterMovement : MonoBehaviour
         
         if (m_inAir) { return; }
         m_inAir = true;
-        onAnimationParamChange?.Invoke(m_InMove, m_InJump, true, m_RB.linearVelocityY);
+        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, true, m_RB.linearVelocityY);
         m_CJump = StartCoroutine(C_JumpUpdate());
     }
 
@@ -167,8 +171,6 @@ public class CharacterMovement : MonoBehaviour
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
             if (m_IsGrounded && m_InMove != 0)
                 ParticleManager.instance.PlayParticle(1, new Vector3(transform.position.x - m_InMove / 2, transform.position.y + .1f, transform.position.z), new Vector3(0, (180 + -m_InMove * 90), 0));
-            //if (!m_IsGrounded || m_InMove == 0) 
-                //ParticleManager.instance.DespawnParticle(1);
         }
     }
 
@@ -182,7 +184,7 @@ public class CharacterMovement : MonoBehaviour
                 case JumpState.grounded:
 
                     //tells other scripts what jump state the player is in
-                    onJumpStateChange?.Invoke(3, m_RB.linearVelocityX);
+                    OnJumpStateChange?.Invoke(3, m_RB.linearVelocityX);
 
                     //changes state if not on ground
                     if (!m_IsGrounded)
@@ -212,7 +214,7 @@ public class CharacterMovement : MonoBehaviour
 
                 case JumpState.rising:
                     
-                    onJumpStateChange?.Invoke(0, m_RB.linearVelocityX);
+                    OnJumpStateChange?.Invoke(0, m_RB.linearVelocityX);
                 
                     
                     //Checks when the apex of the jump has been reached 
@@ -237,7 +239,7 @@ public class CharacterMovement : MonoBehaviour
 
                 case JumpState.apexing:
 
-                    onJumpStateChange?.Invoke(1, m_RB.linearVelocityX);
+                    OnJumpStateChange?.Invoke(1, m_RB.linearVelocityX);
 
                     //slows player while in apex until falling fast enough to be considerd falling
                     m_RB.gravityScale = m_apexGravScale;
@@ -259,7 +261,7 @@ public class CharacterMovement : MonoBehaviour
 
                 case JumpState.falling:
 
-                    onJumpStateChange?.Invoke(2, m_RB.linearVelocityX);
+                    OnJumpStateChange?.Invoke(2, m_RB.linearVelocityX);
 
                     //clamps fall speed
                     m_RB.linearVelocityY = Mathf.Clamp(m_RB.linearVelocityY, m_fallSpeedClamp, 0f);
@@ -274,7 +276,7 @@ public class CharacterMovement : MonoBehaviour
                     }
 
                     if (m_coyoteTimer > Time.time)
-                        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+                        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
 
                     //checks if the player inputs jump and there is no active jump buffer to make a time stamp for jump buffer
@@ -312,7 +314,7 @@ public class CharacterMovement : MonoBehaviour
                         if (m_isMoveActive)
                             AudioManager.instance.PlayPlayerSound(2);
 
-                        onAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, 0f);
+                        OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, 0f);
                         jumpState = JumpState.grounded;
                         break;
                     }

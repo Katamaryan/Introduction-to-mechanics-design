@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     private PlayerAnimation m_playerAnimation;
     #endregion
 
+    public event Action<float> OnLand;
     private bool m_respawnActive = false;
     private Coroutine m_CRespawn;
 
@@ -33,8 +35,9 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMoveCanceled += m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed += m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled += m_characterMovement.JumpCanceled;
-        m_characterMovement.onJumpStateChange += m_colliderPinch.Pinch;
-        m_characterMovement.onAnimationParamChange += m_playerAnimation.AnimationParamChanged;
+        m_characterMovement.OnJumpStateChange += m_colliderPinch.Pinch;
+        m_characterMovement.OnAnimationParamChange += m_playerAnimation.AnimationParamChanged;
+        m_characterMovement.OnLand += Handle_OnLand;
         m_groundCheck.onGrounded += m_characterMovement.OnGrounded;
     }
 
@@ -46,13 +49,16 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onMoveCanceled -= m_characterMovement.SetInMove;
         m_inputHandler.onJumpPerformed -= m_characterMovement.JumpPerformed;
         m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
-        m_characterMovement.onJumpStateChange -= m_colliderPinch.Pinch;
-        m_characterMovement.onAnimationParamChange -= m_playerAnimation.AnimationParamChanged;
+        m_characterMovement.OnJumpStateChange -= m_colliderPinch.Pinch;
+        m_characterMovement.OnAnimationParamChange -= m_playerAnimation.AnimationParamChanged;
         m_groundCheck.onGrounded -= m_characterMovement.OnGrounded;
     }
 
     
-
+    private void Handle_OnLand(float yVel)
+    {
+        OnLand?.Invoke(yVel);
+    }
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)
     {
         Debug.Log($"Took: {inboundDamage} Damage | Current Health: {currentHealth} | Max Health: {maxHealth}");
