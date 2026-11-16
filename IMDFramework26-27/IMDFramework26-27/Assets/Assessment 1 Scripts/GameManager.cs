@@ -19,11 +19,11 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        m_playerRef.GetComponent<PlayerManager>().OnLand += m_cameraRef.GetComponent<CameraManager>().StartLandingCameraShake;
+        //m_playerRef.GetComponent<PlayerManager>().OnLand += m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
     }
 
     void OnDisable()
     {
-        m_playerRef.GetComponent<PlayerManager>().OnLand -= m_cameraRef.GetComponent<CameraManager>().StartLandingCameraShake;
+        //m_playerRef.GetComponent<PlayerManager>().OnLand -= m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
     }
 }

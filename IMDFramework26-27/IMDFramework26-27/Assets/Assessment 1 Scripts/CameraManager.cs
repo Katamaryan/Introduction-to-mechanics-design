@@ -15,6 +15,7 @@ public class CameraManager : MonoBehaviour
     private bool m_camLocked;
     [SerializeField] private float m_topBorderDist;
     [SerializeField] private float m_botBorderDist;
+    [SerializeField] private Vector2 m_camLimits;
 
 
     private void LateUpdate()
@@ -26,8 +27,7 @@ public class CameraManager : MonoBehaviour
         MovingVerticalBorder();
         m_targetPosition.y = m_movingBorder.y;
 
-        if (!m_camLocked)
-            transform.position = Vector3.Lerp(transform.position, m_targetPosition, m_magnitude * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, m_targetPosition, m_magnitude * Time.deltaTime);
     }
 
     private void MovingVerticalBorder()
@@ -45,63 +45,34 @@ public class CameraManager : MonoBehaviour
 
             m_movingBorder.y = m_movingBorder.y - distance;
         }
-        m_movingBorder.y = Mathf.Clamp(m_movingBorder.y, -2, 10);
+        m_movingBorder.y = Mathf.Clamp(m_movingBorder.y, m_camLimits.x, m_camLimits.y);
         m_movingBorder.x = m_movingBorder.y - m_botBorderDist;
         m_movingBorder.z = m_movingBorder.y + m_topBorderDist;
     }
 
-    public void StartDamageCameraShake()
+    public void StartCameraShake(float yVelocity)
     {
-        StartCoroutine(CDamageCameraShake(0.1f, 0.1f));
-    }
-
-    public void StartLandingCameraShake(float yVelocity)
-    {
-        m_camLocked = true;
-        StartCoroutine(CLandingCameraShake(0.1f * -yVelocity / 10, yVelocity));
-    }
-
-
-    private IEnumerator CLandingCameraShake(float duration, float magnitude)
-    {
-        Vector3 originalPos = Camera.main.transform.localPosition;
-        float elapsed = 0f;
-
-        float y = 0f;
-
-        while (elapsed < duration)
-        {
-            if (elapsed < duration / 2)
-                y += Mathf.Clamp(y + Time.deltaTime, 0, magnitude);
-            else
-                y += Mathf.Clamp(y - Time.deltaTime, 0, magnitude);
-
-            Camera.main.transform.localPosition = Vector3.Lerp(Camera.main.transform.localPosition, new Vector3(originalPos.x, originalPos.y + y, originalPos.z), Time.deltaTime);
-        
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        //Camera.main.transform.localPosition = originalPos;
-        m_camLocked = false;
+        //m_camLocked = true;
+        //StartCoroutine(CCameraShake(.1f * -yVelocity / 5, -yVelocity / 5));
     }
    
-    private IEnumerator CDamageCameraShake(float duration, float magnitude)
+    private IEnumerator CCameraShake(float duration, float magnitude)
     {
-        Vector3 originalPos = Camera.main.transform.localPosition;
+        Vector3 originalPos = transform.localPosition;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            float x = UnityEngine.Random.Range(-1, 1f) * magnitude;
-            float y = UnityEngine.Random.Range(-1, 1f) * magnitude;
+            float x = UnityEngine.Random.Range(-1, 1f) * magnitude / Mathf.Exp(elapsed * 2);
+            float y = UnityEngine.Random.Range(-1, 1f) * magnitude / Mathf.Exp(elapsed * 4);
 
-            Camera.main.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+            transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
         
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        Camera.main.transform.localPosition = originalPos;
+        transform.localPosition = originalPos;
+        //m_camLocked = false;
     }
 }

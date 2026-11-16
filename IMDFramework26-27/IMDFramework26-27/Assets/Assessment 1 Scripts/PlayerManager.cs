@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour
     private ColliderPinch m_colliderPinch;
     private HealthComponent m_healthComponent;
     private PlayerAnimation m_playerAnimation;
+    private Rigidbody2D m_RB;
     #endregion
 
     public event Action<float> OnLand;
@@ -25,6 +26,7 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler = transform.GetComponent<InputHandler>();
         m_healthComponent = transform.GetComponent<HealthComponent>();
         m_playerAnimation = transform.GetChild(1).GetComponent<PlayerAnimation>();
+        m_RB = transform.GetComponent<Rigidbody2D>();
     }
 
     private void Start()
@@ -83,18 +85,19 @@ public class PlayerManager : MonoBehaviour
     {
         while (m_respawnActive)
         {
+            m_RB.AddForce(Vector3.up * (m_RB.linearVelocityY + 5) * 2, ForceMode2D.Impulse);
             m_playerAnimation.AnimationDamage(m_characterMovement.m_lastMoveDirection, true);
             m_inputHandler.m_ActionMap.Disable();
             ParticleManager.instance.PlayParticle(3, transform.position, Vector3.zero);
-            Time.timeScale = .7f;
+            Time.timeScale = .3f;
 
             yield return new WaitForSeconds(.5f);
 
             Time.timeScale = 1.0f;
             m_playerAnimation.AnimationDamage(m_characterMovement.m_lastMoveDirection, false);
             m_inputHandler.m_ActionMap.Enable();
-            m_respawnActive = false;
             transform.position = m_groundCheck.m_safePosition;
+            m_respawnActive = false;
         }
     }
 }
