@@ -4,8 +4,10 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject m_PlayerPrefab;
     private GameObject m_playerRef;
-    private Transform m_cameraFollowerRef;
+    [SerializeField] private TimeManager m_timeManager;
+    [SerializeField] private CollectibleManager m_collectibleManager;
     [SerializeField] private GameObject m_cameraRef;
+    private Transform m_cameraFollowerRef;
 
     void Awake()
     {
@@ -15,11 +17,16 @@ public class GameManager : MonoBehaviour
         //gets camerafollower
         m_cameraFollowerRef = m_playerRef.transform.GetChild(3);
         m_cameraRef.GetComponent<CameraManager>().m_target = m_cameraFollowerRef;
+
+        m_timeManager.m_maxCollectibles = m_collectibleManager.m_collectibles.Length;
     }
 
     void OnEnable()
     {
         m_playerRef.GetComponent<PlayerManager>().OnSpawn += EnablePlayer;
+
+        m_collectibleManager.OnCollect += m_timeManager.CollictibleGot;
+        m_timeManager.OnRestart += m_collectibleManager.CollectibleReset;
     }
 
     private void EnablePlayer()

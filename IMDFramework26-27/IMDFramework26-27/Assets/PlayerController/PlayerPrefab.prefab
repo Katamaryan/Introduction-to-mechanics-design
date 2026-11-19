@@ -266,8 +266,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5406072704542687043}
-  - component: {fileID: 5404571805249445837}
   - component: {fileID: 8632643063295621059}
+  - component: {fileID: 5404571805249445837}
+  - component: {fileID: 8849390599430636247}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Player
@@ -290,29 +291,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3600401525870630746}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5404571805249445837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062927974038001864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5757fd166c3fff43bfa1f5d028f5aa5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ColliderPinch
-  m_playerCol: {fileID: 8632643063295621059}
-  m_RB: {fileID: 969958807700409231}
-  m_colliderSizeNormal: {x: 1, y: 2}
-  m_verticalSizePinch: {x: 0.5, y: 2}
-  m_horizontalSizePinch: {x: 1, y: 1.5}
-  m_groundMask:
-    serializedVersion: 2
-    m_Bits: 8
-  m_overlapCheckBuffer: 0.15
-  m_verticalColliderResetBuffer: 0.2
-  m_horizontalColliderResetBuffer: 0.05
 --- !u!61 &8632643063295621059
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -359,6 +337,41 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &5404571805249445837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062927974038001864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5757fd166c3fff43bfa1f5d028f5aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ColliderPinch
+  m_playerCol: {fileID: 8632643063295621059}
+  m_RB: {fileID: 969958807700409231}
+  m_colliderSizeNormal: {x: 1, y: 2}
+  m_verticalSizePinch: {x: 0.5, y: 2}
+  m_horizontalSizePinch: {x: 1, y: 1.5}
+  m_groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  m_overlapCheckBuffer: 0.15
+  m_verticalColliderResetBuffer: 0.2
+  m_horizontalColliderResetBuffer: 0.05
+--- !u!114 &8849390599430636247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062927974038001864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5f2c91eb5c25164a8510b9a8c3fe84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &3512348977773530507
 GameObject:
   m_ObjectHideFlags: 0

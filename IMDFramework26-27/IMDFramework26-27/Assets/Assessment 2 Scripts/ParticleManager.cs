@@ -3,8 +3,8 @@ using static UnityEngine.ParticleSystem;
 
 public class ParticleManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] m_particlePrefab = new GameObject[4];
-    private GameObject[] m_particleRef = new GameObject[4];
+    [SerializeField] private GameObject[] m_particlePrefab = new GameObject[5];
+    private GameObject[] m_particleRef = new GameObject[5];
     public static ParticleManager instance { get; set; }
 
     [SerializeField] private int m_defaultSize;

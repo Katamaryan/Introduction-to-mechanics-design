@@ -105,11 +105,13 @@ public class PlayerManager : MonoBehaviour
             m_playerAnimation.AnimationDamage(m_characterMovement.m_lastMoveDirection, true);
             m_inputHandler.m_ActionMap.Disable();
             ParticleManager.instance.PlayParticle(3, transform.position, Vector3.zero);
+            PostProcessingManager.instance.ActivateEffect(0);
             Time.timeScale = .3f;
 
             yield return new WaitForSeconds(.5f);
 
             Time.timeScale = 1.0f;
+            PostProcessingManager.instance.DeactivateEffect(0);
             m_playerAnimation.AnimationDamage(m_characterMovement.m_lastMoveDirection, false);
             m_inputHandler.m_ActionMap.Enable();
             transform.position = m_groundCheck.m_safePosition;
