@@ -10,6 +10,7 @@ public class CharacterMovement : MonoBehaviour
 
     public event Action<int, float> OnJumpStateChange;
     public event Action<float> OnLand;
+    public event Action<float> OnMove;
     public event Action<float, bool, bool, float> OnAnimationParamChange;
 
     [Header("Movement Parameters")]
@@ -85,7 +86,7 @@ public class CharacterMovement : MonoBehaviour
 
             else
             {
-            ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
+                ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
                 OnLand?.Invoke(m_fallVelocity);
             }
         }
@@ -105,6 +106,8 @@ public class CharacterMovement : MonoBehaviour
     public void MovePerformed(float direction)
     {
         m_InMove = direction;
+
+        OnMove?.Invoke(m_InMove);
 
         if (m_InMove != 0)
             m_lastMoveDirection = m_InMove;
@@ -128,6 +131,8 @@ public class CharacterMovement : MonoBehaviour
     public void SetInMove(float direction)
     {
         m_InMove = direction;
+
+        OnMove?.Invoke(m_InMove);
 
         OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 

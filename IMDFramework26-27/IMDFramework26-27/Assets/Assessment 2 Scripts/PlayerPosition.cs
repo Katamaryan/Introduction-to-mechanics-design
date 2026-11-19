@@ -40,7 +40,7 @@ public class PlayerPosition : MonoBehaviour
         labelcontainer.Add(yVollabel);
 
 
-        TransformWrapper playerTransform = GameObject.Find("PlayerPrefab(Clone)").GetComponent<TransformWrapper>();
+        TransformWrapper playerTransform = GameObject.FindWithTag("Player").GetComponent<TransformWrapper>();
         DataBinding xBinding = new DataBinding
         {
             dataSource = playerTransform,

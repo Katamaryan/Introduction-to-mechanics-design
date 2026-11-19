@@ -15,6 +15,10 @@ public class PlayerManager : MonoBehaviour
     #endregion
 
     public event Action<float> OnLand;
+    public event Action<float> OnMove;
+    public event Action<float> OnDamage;
+    public event Action OnSpawn;
+    public event Action OnDespawn;
     private bool m_respawnActive = false;
     private Coroutine m_CRespawn;
 
@@ -31,6 +35,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
+        OnSpawn?.Invoke();
         m_healthComponent.onDamaged += Handle_OnHealthDamaged;
         m_healthComponent.onDead += Handle_OnPlayerDeath;
         m_inputHandler.onMovePerformed += m_characterMovement.MovePerformed;
@@ -40,11 +45,13 @@ public class PlayerManager : MonoBehaviour
         m_characterMovement.OnJumpStateChange += m_colliderPinch.Pinch;
         m_characterMovement.OnAnimationParamChange += m_playerAnimation.AnimationParamChanged;
         m_characterMovement.OnLand += Handle_OnLand;
+        m_characterMovement.OnMove += Handle_OnMove;
         m_groundCheck.onGrounded += m_characterMovement.OnGrounded;
     }
 
     private void OnDestroy()
     {
+        OnDespawn?.Invoke();
         m_healthComponent.onDamaged -= Handle_OnHealthDamaged;
         m_healthComponent.onDead -= Handle_OnPlayerDeath;
         m_inputHandler.onMovePerformed -= m_characterMovement.MovePerformed;
@@ -53,6 +60,8 @@ public class PlayerManager : MonoBehaviour
         m_inputHandler.onJumpCanceled -= m_characterMovement.JumpCanceled;
         m_characterMovement.OnJumpStateChange -= m_colliderPinch.Pinch;
         m_characterMovement.OnAnimationParamChange -= m_playerAnimation.AnimationParamChanged;
+        m_characterMovement.OnLand -= Handle_OnLand;
+        m_characterMovement.OnMove -= Handle_OnMove;
         m_groundCheck.onGrounded -= m_characterMovement.OnGrounded;
     }
 
@@ -61,9 +70,16 @@ public class PlayerManager : MonoBehaviour
     {
         OnLand?.Invoke(yVel);
     }
+    
+    private void Handle_OnMove(float direction)
+    {
+        OnMove?.Invoke(direction);
+    }
+    
     private void Handle_OnHealthDamaged(float currentHealth, float maxHealth, float inboundDamage)
     {
         Debug.Log($"Took: {inboundDamage} Damage | Current Health: {currentHealth} | Max Health: {maxHealth}");
+        OnDamage?.Invoke(0f);
     }
 
     private void Handle_OnPlayerDeath(MonoBehaviour causer)

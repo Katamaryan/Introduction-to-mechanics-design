@@ -19,11 +19,24 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        //m_playerRef.GetComponent<PlayerManager>().OnLand += m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+        m_playerRef.GetComponent<PlayerManager>().OnSpawn += EnablePlayer;
     }
 
-    void OnDisable()
-    {
-        //m_playerRef.GetComponent<PlayerManager>().OnLand -= m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+    private void EnablePlayer()
+    { 
+        m_playerRef.GetComponent<PlayerManager>().OnDamage += m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+        m_playerRef.GetComponent<PlayerManager>().OnLand += m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+        m_playerRef.GetComponent<PlayerManager>().OnMove += m_cameraRef.GetComponent<CameraManager>().SetHorizontalOffset;
+        m_playerRef.GetComponent<PlayerManager>().OnSpawn += DisablePlayer;
     }
+    
+    private void DisablePlayer()
+    { 
+        m_playerRef.GetComponent<PlayerManager>().OnDamage -= m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+        m_playerRef.GetComponent<PlayerManager>().OnLand -= m_cameraRef.GetComponent<CameraManager>().StartCameraShake;
+        m_playerRef.GetComponent<PlayerManager>().OnMove -= m_cameraRef.GetComponent<CameraManager>().SetHorizontalOffset;
+        m_playerRef.GetComponent<PlayerManager>().OnSpawn -= EnablePlayer;
+        m_playerRef.GetComponent<PlayerManager>().OnSpawn -= DisablePlayer;
+    }
+
 }

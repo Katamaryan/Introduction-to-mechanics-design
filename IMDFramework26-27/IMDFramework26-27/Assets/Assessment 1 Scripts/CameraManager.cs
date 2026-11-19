@@ -25,7 +25,7 @@ public class CameraManager : MonoBehaviour
 
         m_targetPosition = new Vector3(m_target.position.x + m_OffsetX, m_target.position.y, m_target.position.z);
         MovingVerticalBorder();
-        m_targetPosition.y = m_movingBorder.y;
+        m_targetPosition.y = m_movingBorder.y;;
 
         transform.position = Vector3.Lerp(transform.position, m_targetPosition, m_magnitude * Time.deltaTime);
     }
@@ -50,10 +50,20 @@ public class CameraManager : MonoBehaviour
         m_movingBorder.z = m_movingBorder.y + m_topBorderDist;
     }
 
+    public void SetHorizontalOffset(float direction)
+    {
+        m_OffsetX  = direction * 5;
+    }
+
     public void StartCameraShake(float yVelocity)
     {
+        if (yVelocity == 0)
+        {
+            StartCoroutine(CCameraShake(.5f, .2f));
+        }
         //m_camLocked = true;
-        //StartCoroutine(CCameraShake(.1f * -yVelocity / 5, -yVelocity / 5));
+        else
+            StartCoroutine(CCameraShake(.1f, .1f * -yVelocity / 10));
     }
    
     private IEnumerator CCameraShake(float duration, float magnitude)
