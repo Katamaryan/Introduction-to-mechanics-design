@@ -4,6 +4,7 @@ using UnityEngine;
 public class MovingPlatform : MonoBehaviour
 {
     [SerializeField] private GameObject[] pathingPoints;
+    [SerializeField] private float m_speed;
     private Rigidbody2D m_RB;
     private Vector3 m_distance; 
     private Vector3 m_lastPos;
@@ -19,7 +20,7 @@ public class MovingPlatform : MonoBehaviour
         if (m_currentPoint == pathingPoints.Length)
             m_currentPoint = 0;
         
-        transform.position = Vector3.MoveTowards(transform.position, pathingPoints[m_currentPoint].transform.position, 1f * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, pathingPoints[m_currentPoint].transform.position, m_speed * Time.deltaTime);
         
         m_distance = transform.position - m_lastPos;    
         m_lastPos = transform.position;
@@ -29,11 +30,12 @@ public class MovingPlatform : MonoBehaviour
             m_currentPoint += 1;
     }
 
-    //private void OnCollisionStay2D(Collision2D collision)
-    //{
-    //    if (collision.transform.GetComponent<CharacterMovement>() != null )
-    //    {
-    //        collision.transform.position += m_distance;
-    //    }
-    //}
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.transform.GetComponent<CharacterMovement>() != null)
+        {
+            collision.transform.position += m_distance;
+        }
+    }
+
 }

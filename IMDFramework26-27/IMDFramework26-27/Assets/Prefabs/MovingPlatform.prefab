@@ -110,6 +110,7 @@ MonoBehaviour:
   pathingPoints:
   - {fileID: 7067649003310637960}
   - {fileID: 2378266203443157499}
+  m_speed: 3
 --- !u!50 &3308740769059278424
 Rigidbody2D:
   serializedVersion: 5
@@ -224,7 +225,7 @@ MonoBehaviour:
     m_TrimEdge: 0.05
     m_FlipX: 0
     m_FlipY: 0
-    m_InitialTrim: 0.05
+    m_InitialTrim: 0
   m_CastingOption: 1
   m_PreviousTrimEdge: 0.05
   m_PreviousEdgeProcessing: 1
