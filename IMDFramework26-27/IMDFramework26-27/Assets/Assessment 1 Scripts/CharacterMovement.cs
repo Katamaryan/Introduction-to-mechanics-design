@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -65,8 +66,11 @@ public class CharacterMovement : MonoBehaviour
         {
             m_IsGrounded = isOnPlatform;
         }
+     
+        //plays landing animation
         OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
+        //performs all movement checks when the plaer leaes the ground
         if (!m_IsGrounded)
         {
             m_fallVelocity = 0f;
@@ -77,13 +81,15 @@ public class CharacterMovement : MonoBehaviour
 
         }
 
-        if (m_IsGrounded && m_fallVelocity < 0)
+        //checks if the player has landed from a fall
+        if (m_IsGrounded && m_fallVelocity < -1.5f)
         {
+            //plays light fall effects
             if (m_fallVelocity > -12.5)
             {
                 ParticleManager.instance.PlayParticle(2, transform.position + Vector3.up / 4, Vector3.zero);
             }
-
+            //plays heavy fall effects
             else
             {
                 ParticleManager.instance.PlayParticle(0, transform.position + Vector3.up / 4, Vector3.zero);
@@ -111,7 +117,9 @@ public class CharacterMovement : MonoBehaviour
 
         if (m_InMove != 0)
             m_lastMoveDirection = m_InMove;
+
         OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
+        
         if (m_InMove == 0)
         {
             m_isMoveActive = false;
@@ -123,6 +131,7 @@ public class CharacterMovement : MonoBehaviour
             m_isMoveActive = true;
             m_CMove = StartCoroutine(C_MoveUpdate());
         }
+        
         if (m_IsGrounded)
         {
             AudioManager.instance.PlayPlayerSound(2);
@@ -177,6 +186,8 @@ public class CharacterMovement : MonoBehaviour
 
             Vector3 target = transform.position;
             m_RB.linearVelocityX = m_MoveSpeed * m_InMove;
+
+            //plays running dust if the player runs while on the floor
             if (m_IsGrounded && m_InMove != 0)
                 ParticleManager.instance.PlayParticle(1, new Vector3(transform.position.x - m_InMove / 2, transform.position.y + .1f, transform.position.z), new Vector3(0, (180 + -m_InMove * 90), 0));
         }
@@ -211,7 +222,7 @@ public class CharacterMovement : MonoBehaviour
                     }
 
 
-                    //checks there is no input and kills the porgram
+                    //checks there is no input and kills the program
                     if(!m_InJump) 
                     {
                         m_inAir = false;
@@ -252,13 +263,14 @@ public class CharacterMovement : MonoBehaviour
                     //slows player while in apex until falling fast enough to be considerd falling
                     m_RB.gravityScale = m_apexGravScale;
 
-
+                    //sets falling gravity to eavier on way down
                     if (m_RB.linearVelocityY < -0.2f)
                     {
                         m_RB.gravityScale = m_fallingGravScale;
                         jumpState = JumpState.falling;
                     }
 
+                    //let plaer go back to grunded state if they manage to land exactly at the apex of a fall
                     if (m_IsGrounded)
                     {
                         m_RB.gravityScale = 1f;
@@ -283,6 +295,7 @@ public class CharacterMovement : MonoBehaviour
                         break;
                     }
 
+                    //plays fall animaton when coyote time ends
                     if (m_coyoteTimer > Time.time)
                         OnAnimationParamChange?.Invoke(m_InMove, m_InJump, m_IsGrounded, m_RB.linearVelocityY);
 
