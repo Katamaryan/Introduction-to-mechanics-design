@@ -3,7 +3,8 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioClip[] m_playerSounds = new AudioClip[3];
+    [SerializeField] private AudioClip[] m_playerSounds = new AudioClip[4];
+    [SerializeField] private AudioClip[] m_collectibleSounds = new AudioClip[1];
     private AudioSource m_audioSource;
 
     public static AudioManager instance { get; private set; }    
@@ -28,6 +29,13 @@ public class AudioManager : MonoBehaviour
         else
             m_audioSource.loop = false;
         m_audioSource.clip = m_playerSounds[clipID];
+        m_audioSource.Play();
+    }
+
+    public void PlaySound(int clipID)
+    {
+        m_audioSource.loop = false;
+        m_audioSource.clip = m_collectibleSounds[clipID];
         m_audioSource.Play();
     }
 

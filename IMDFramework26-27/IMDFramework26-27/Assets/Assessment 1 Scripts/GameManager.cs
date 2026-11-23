@@ -7,11 +7,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TimeManager m_timeManager;
     [SerializeField] private CollectibleManager m_collectibleManager;
     [SerializeField] private GameObject m_cameraRef;
+    [SerializeField] private Transform m_spawnPoint;
     private Transform m_cameraFollowerRef;
 
     void Awake()
     {
-        m_playerRef = Instantiate(m_PlayerPrefab);
+        m_playerRef = Instantiate(m_PlayerPrefab, m_spawnPoint.position, m_spawnPoint.rotation);
 
         m_playerRef.GetComponent<PlayerManager>().init();
         //gets camerafollower

@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/UI%20Elements/TextUi.uss?fileID=7433441132597879392&amp;guid=ef13970db8d71c646950ca9ac0b239ba&amp;type=3#TextUi"/>
+    <ui:VisualElement name="container" class="container" style="flex-grow: 1; width: 100%; height: 100%;">
+        <ui:Label text="Label" name="Text"/>
+    </ui:VisualElement>
+</ui:UXML>

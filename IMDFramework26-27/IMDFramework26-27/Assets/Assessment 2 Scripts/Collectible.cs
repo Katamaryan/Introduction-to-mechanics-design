@@ -9,6 +9,7 @@ public class Collectible : MonoBehaviour, IPickupable
     public void Collect()
     {
         OnCollection?.Invoke(m_scoreValue);
+        AudioManager.instance.PlaySound(0);
         ParticleManager.instance.PlayParticle(4, transform.position, Vector3.zero);
         transform.gameObject.SetActive(false);
     }
